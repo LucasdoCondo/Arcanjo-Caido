@@ -35,7 +35,7 @@ offset_right = 5.0
 offset_bottom = -12.0
 color = Color(1, 0.65, 0.2, 0.95)
 
-[node name="Light" type="PointLight2D" parent="."]
+[node name="Light" type="PointLight2D" parent="." groups=["emissive"]]
 position = Vector2(0, -16)
 color = Color(1, 0.8, 0.5, 1)
 energy = 1.3

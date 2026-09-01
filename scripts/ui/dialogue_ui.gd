@@ -189,9 +189,10 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not active:
 		return
-	var advance := event.is_action_pressed("interact") \
+	var advance: bool = event.is_action_pressed("interact") \
 			or event.is_action_pressed("jump") \
-			or (event is InputEventKey and event.pressed and event.physical_keycode == KEY_ENTER)
+			or (event is InputEventKey and (event as InputEventKey).pressed \
+					and (event as InputEventKey).physical_keycode == KEY_ENTER)
 
 	if not advance:
 		return

@@ -62,7 +62,11 @@ ARCANJO CAIDO/
 - [x] **Passo 5** — Diálogos modulares (JSON ramificado + typewriter + pausa), NPCs: Cassandra (vende o mapa), Mormo (loja de Sigilos/bênções) e quest do Azazel com escolha moral
 - [x] **Passo 6** — Conquistas offline + Sigilos do Banimento equipáveis (inventário no pause, modificadores em tempo real)
 - [x] **Passo 15** — Bloom + color grading por bioma, sombras dinâmicas (LightOccluder2D), normal maps (FxUtil), vinheta e névoa volumétrica (shaders), Postura Parry, 3 Sigilos da lore (Azazel/Serpente/Mammon), Memórias Fragmentadas e `docs/LORE.md`
+- [x] **Passo 19** — Tech Art: iluminação global (bloom + tonemapping), emissão ajustável (Chama Negra/olhos de chefes), perfis de cor/LUT (frio/Cripta, dourado/Catedral), normal maps 2D, sombras dinâmicas 2D (occluders), shaders de vinheta + névoa volumétrica
 - [x] **Conteúdo v1** — Sprite sheets + AnimationPlayer (Lúcifer 6 anims, Guardião 4 frames, Mammon), biomas novos (Jardim de Adonai-Gal com Espectros voadores + Mar de Vidro) e `docs/BALANCEAMENTO.md`
+- [x] **Passo 16** — Animação Fluida: Squash & Stretch (estica ao pular/esticado no dash, achata ao aterrissar/ground pound), Rotational Lean (inclina ao acelerar/frear/mudar de direção), interpolação de movimento (physics interpolation + visuais por frame no `_process` para 120/144Hz+), Coyote Time e Jump Buffer
+- [x] **Passo 17** — Física Secundária: capa carcomida de Lúcifer (simulação de juntas que responde ao vento/gravidade/velocidade), rastro fantasma (afterimages semi-transparentes com fade-out no dash), partículas de cenário (poeira dos pés ao correr/pular/aterrissar, faíscas no contato da lâmina, gotas de sangue negro que caen/grudan nas plataformas)
+- [x] **Passo 18** — Vegetação e Cenários Reativos: plantas/cadenas/mantas que se mecen ao passar Lúcifer ou inimigos, elementos destruibles (vasos/caixas/estátuas que se quebram em pedazos com física de gravidade), reflexos em superfícies (shader mirror_water para rios de mercúrio/chão polido que reflete o sprite e as luces)
 
 ## 🗺️ Mundo (Salas conectadas)
 

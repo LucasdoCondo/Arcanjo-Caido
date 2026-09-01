@@ -15,6 +15,9 @@ func _ready() -> void:
 	super()
 	start_position = global_position  ## Guarda o "ninho" aéreo
 
+	# [TECH ART] Normal map neutro — reacciona aux PointLight2D da sala.
+	FxUtil.apply_flat_normal(visual)
+
 
 func _physics_process(delta: float) -> void:
 	# Flash de dano (herdado).

@@ -89,7 +89,7 @@ func _build_ui() -> void:
 	for slot in SaveManager.SLOT_COUNT:
 		var btn_save := Button.new()
 		btn_save.text = "Salvar no Slot %d" % (slot + 1)
-		var captured := slot
+		var captured: int = slot
 		btn_save.pressed.connect(func(): SaveManager.save_slot(captured))
 		opts.add_child(btn_save)
 	opts.add_child(HSeparator.new())
@@ -107,7 +107,7 @@ func _build_ui() -> void:
 		var res: Vector2i = DisplayManager.RESOLUTIONS[i]
 		var btn_res := Button.new()
 		btn_res.text = "Resolução: %d x %d" % [res.x, res.y]
-		var captured := i
+		var captured: int = i
 		btn_res.pressed.connect(func(): DisplayManager.set_resolution(captured))
 		opts.add_child(btn_res)
 	opts.add_child(HSeparator.new())
@@ -199,7 +199,7 @@ func _refresh_sigilos() -> void:
 		row.add_child(label)
 		var btn := Button.new()
 		btn.text = "Remover" if equipped else "Equipar"
-		var captured := id
+		var captured: String = id
 		btn.pressed.connect(func():
 			GameState.toggle_sigil(captured)
 			var p = get_tree().get_first_node_in_group("player")

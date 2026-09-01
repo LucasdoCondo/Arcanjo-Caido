@@ -89,7 +89,7 @@ func _toggle_slots() -> void:
 		var info := SaveManager.get_slot_info(slot)
 		var text := "Slot %d — vazio" % (slot + 1)
 		if not info.is_empty():
-			var pratas := info.get("player", {}).get("pratas", 0)
+			var pratas: int = int(info.get("player", {}).get("pratas", 0))
 			text = "Slot %d — %s — ◇ %d" % [slot + 1, info.get("room_name", "?"), pratas]
 		var btn := Button.new()
 		btn.text = text

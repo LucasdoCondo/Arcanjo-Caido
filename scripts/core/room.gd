@@ -25,6 +25,30 @@ extends Node2D
 @export var vignette_intensity: float = 0.45 ## Escurecimento das bordas
 @export var fog_enabled: bool = true         ## Névoa volumétrica em movimento
 
+# ===========================================================================
+# [TECH ART] — Iluminação Global, Perfis de Cor e Emissão (Passo 19)
+# ===========================================================================
+## Perfil de color grading pré-definido (substitui os ajustes manuais).
+enum ColorProfile { CUSTOM, CRIPTA_FRIA, CATEDRAL_DOURADA, JARDIM_FRESCO, MAR_GELADO }
+
+@export_group("Tech Art — Color Grading / LUT")
+@export var color_profile: ColorProfile = ColorProfile.CUSTOM
+## Perfil = preset de adjustment (sat/bright/contrast) + tint. Em CUSTOM os
+## valores manuais abaixo continuam valendo. Para LUT real, use a propriedade
+## `adjustment_color_correction` do Environment com uma textura PNG 16x16x16.
+@export var adjust_contrast: float = 1.0     ## Contraste do color grading
+
+@export_group("Tech Art — Tonemapping")
+@export var tonemap_enabled: bool = true
+@export var tonemap_exposure: float = 1.0    ## Ajuste fino de exposição global
+@export var tonemap_white: float = 1.0       ## Ponto de clipagem do branco
+
+@export_group("Tech Art — Emissão (Bloom)")
+## Mult. global de energia das PointLight2D no grupo "emissive" da sala
+## (Chama Negra, olhos de chefes, ataques, tochas). Brilha com o bloom.
+@export var emissive_boost: float = 1.35
+@export var ambient_flicker: float = 0.0     ## Pulso global suave opcional (0 = off)
+
 
 func _ready() -> void:
 	assert(room_id != "", "Sala sem room_id: " + name)
@@ -58,6 +82,9 @@ func _ready() -> void:
 	_create_vignette()
 	if fog_enabled:
 		_create_fog()
+
+	# [TECH ART] Passo 19: gestor de iluminação global (emissão bloom + normal maps).
+	_add_lighting_manager()
 
 
 func _create_ambient_light() -> void:
@@ -107,7 +134,7 @@ func _add_parallax_layer(pbg: ParallaxBackground, motion: float,
 # PASSO 15 — PÓS-PROCESSAMENTO, SOMBRAS, VINHETA E NÉVOA
 # ===========================================================================
 func _create_environment() -> void:
-	## Bloom (glow) + color grading por região. Requer hdr_2d ativo no projeto.
+	## Bloom (glow) + color grading por região + TONEMAPPING. Requer hdr_2d ativo.
 	if has_node("WorldEnv"):
 		return
 	var we := WorldEnvironment.new()
@@ -120,11 +147,71 @@ func _create_environment() -> void:
 		env.glow_bloom = 0.1
 		env.glow_hdr_threshold = 1.0
 		env.glow_blend_mode = Environment.GLOW_BLEND_MODE_ADDITIVE
+
+	# [TECH ART] Tonemapping: converte o HDR 2D em imagem final agradável.
+	# FILMIC é o padrão "cinematográfico"; adjuste exposure/white no inspetor.
+	if tonemap_enabled:
+		env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+		env.tonemap_exposure = tonemap_exposure
+		env.tonemap_white = tonemap_white
+	else:
+		env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+
 	env.adjustment_enabled = true
 	env.adjustment_brightness = adjust_brightness
 	env.adjustment_saturation = adjust_saturation
+	env.adjustment_contrast = adjust_contrast
+
+	# [TECH ART] Perfil de cor pré-definido por bioma (LUT-like via adjustment + tint).
+	# Para LUT real: `env.adjustment_color_correction = preload("res://assets/luts/xxx.png")`
+	# — use o padrão 16x16x16 (4096px) e lembre-se de desativar o blend na textura.
+	_apply_color_profile(env)
+
 	we.environment = env
 	add_child(we)
+
+
+func _apply_color_profile(env: Environment) -> void:
+	## Aplica o preset do perfil escolhido, sobrescrevendo os valores manuais.
+	match color_profile:
+		ColorProfile.CRIPTA_FRIA:      ## Cripta das Estrelas Caídas — tons azuis/frios
+			env.adjustment_saturation = 0.88
+			env.adjustment_brightness = 0.98
+			env.adjustment_contrast = 1.06
+			_apply_profile_tint(Color(0.55, 0.6, 0.8))
+		ColorProfile.CATEDRAL_DOURADA: ## Catedral de Mammon — tons dourados/quentes
+			env.adjustment_saturation = 1.15
+			env.adjustment_brightness = 1.05
+			env.adjustment_contrast = 1.0
+			_apply_profile_tint(Color(1.0, 0.85, 0.6))
+		ColorProfile.JARDIM_FRESCO:    ## Jardim de Adonai-Gal — verde fresco
+			env.adjustment_saturation = 1.06
+			env.adjustment_brightness = 1.0
+			env.adjustment_contrast = 1.02
+			_apply_profile_tint(Color(0.7, 0.9, 0.7))
+		ColorProfile.MAR_GELADO:       ## Mar de Vidro — branco-azulado gelado
+			env.adjustment_saturation = 0.92
+			env.adjustment_brightness = 1.02
+			env.adjustment_contrast = 1.08
+			_apply_profile_tint(Color(0.7, 0.8, 1.0))
+
+
+## Pinta a luz ambiente (CanvasModulate) com o tint do perfil de cor.
+func _apply_profile_tint(tint: Color) -> void:
+	var cm: CanvasModulate = get_node_or_null("Ambiente") as CanvasModulate
+	if cm and ambient_color != Color.BLACK:
+		cm.color = ambient_color * tint.lerp(Color.WHITE, 0.5)
+
+
+## [TECH ART] Cria o gestor de iluminação global (emissão bloom + normal maps).
+func _add_lighting_manager() -> void:
+	if has_node("Lighting"):
+		return
+	var lm := LightingManager.new()
+	lm.name = "Lighting"
+	lm.emissive_boost = emissive_boost
+	lm.ambient_flicker = ambient_flicker
+	add_child(lm)
 
 
 func _add_shadow_occluders(node: Node) -> void:

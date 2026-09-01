@@ -29,6 +29,7 @@ connections = PackedStringArray("jardim_adonai")
 ambient_color = Color(0.4, 0.52, 0.68, 1)
 adjust_saturation = 0.95
 vignette_intensity = 0.5
+color_profile = 4
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10

@@ -49,6 +49,26 @@ enum State {
 @export var friction: float = 3400.0            ## Fricção no chão ao soltar o direcional
 @export var air_acceleration: float = 1800.0    ## Aceleração no ar (menor = mais "pesado")
 @export var air_friction: float = 900.0         ## Fricção no ar
+# ---------------------------------------------------------------------------
+# PASSO 16: ANIMAÇÃO FLUIDA — Squash & Stretch + Rotational Lean
+# ---------------------------------------------------------------------------
+@export_group("Squash & Stretch (Deformação)")
+@export var squash_intensity: float = 0.10     ## Deformação máxima ao pular/aterrissar (1.0 = tamanho original(
+@export var squash_speed: float = 10.0        ## Velocidade de retorno ao normal do sprite
+@export var squash_fall_factor: float = 0.0022 ## Converte velocidade de queda → intensidade do squash
+
+@export_group("Rotational Lean (Inclinação dinâmica)")
+@export var lean_intensity: float = 0.09        ## Inclinação máxima ao acelerar/frear (rad(
+@export var lean_speed: float = 8.0           ## Suavização do lean (maior = mais ágil(
+@export var lean_dash_tilt: float = 0.15        ## Inclinação do dash (antes era -0.15 fixo(
+
+# ---------------------------------------------------------------------------
+# PASSO 17: Rastros Fantasma (Afterimage) no Dash de Sombra
+# ---------------------------------------------------------------------------
+@export_group("Rastros Fantasma (Passo 17)")
+@export var ghost_interval: float = 0.03        ## Intervalo entre afterimages durante o dash
+@export var ghost_alpha: float = 0.5            ## Opacidade inicial do afterimage
+@export var ghost_lifetime: float = 0.3         ## Duração do fade-out (s)
 
 # ---------------------------------------------------------------------------
 # PULO (altura variável + coyote time + buffer)
@@ -148,6 +168,18 @@ var _parry_timer: float = 0.0       ## Janela de parry ativa
 var _parry_cd: float = 0.0          ## Recarga do parry
 var _dash_hits: Array[Area2D] = []  ## Alvos já corroídos pelo dash venenoso
 
+# --- Passo 16: Squash & Stretch + Rotational Lean ---
+var _squash_scale: Vector2 = Vector2.ONE     ## Escala deformada atual do sprite
+var _sprite_base_scale: Vector2 = Vector2.ONE ## Escala base da cena (multiplicador(
+var _landing_pending: bool = false             ## Evita squash duplicado na mesma aterrissagem
+var _fall_impact_speed: float = 0.0       ## Velocidade Y capturada antes do impacto
+var _lean_angle: float = 0.0              ## Rotação suavizada atual (Rotational Lean(
+
+# --- Passo 17: Física secundária + partículas ---
+var _cape: Cape2D = null                  ## Capa física (juntas) criada no _ready
+var _dust_fx: CPUParticles2D = null        ## Poeira dos pés (Passo 17)
+var _ghost_timer: float = 0.0              ## Acumulador para os afterimages do dash
+
 # --- Combate (Passo 2) ---
 var _attack_dir: Direction = Direction.NEUTRAL
 var _attack_timer: float = 0.0
@@ -174,6 +206,7 @@ var _heal_channel_timer: float = 0.0
 @onready var dash_fx: CPUParticles2D = $DashFX
 @onready var land_fx: CPUParticles2D = $LandFX
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
+@onready var chama_light: PointLight2D = $ChamaNegra  ## Passo 19: luz emissiva do Chama Negra
 
 func _ready() -> void:
 	jumps_left = _max_jumps()
@@ -181,8 +214,49 @@ func _ready() -> void:
 	chama_negra = 0.0
 	apply_sigils()
 	FxUtil.apply_flat_normal(sprite)  ## Passo 15: luzes 2D reagem ao sprite
+	if sprite:
+		_sprite_base_scale = sprite.scale  ## Passo 16: base para o Squash & Stretch
 	if hitbox:
 		hitbox.monitoring = false  ## Hitbox só liga durante a janela ativa do golpe
+
+	# Passo 17: capa física + emisor de poeira dos pés (criados por código).
+	if $Cape == null:
+		_cape = Cape2D.new()
+		_cape.name = "Cape"
+		add_child(_cape)
+	else:
+		_cape = $Cape
+	if $DustFX == null:
+		var dust := CPUParticles2D.new()
+		dust.name = "DustFX"
+		dust.position = Vector2(0.0, 30.0)
+		dust.amount = 6
+		dust.one_shot = false
+		dust.lifetime = 0.3
+		dust.direction = Vector2(0, -1)
+		dust.spread = 90.0
+		dust.gravity = Vector2(0, 220)
+		dust.initial_velocity_min = 30.0
+		dust.initial_velocity_max = 90.0
+		dust.scale_amount_min = 1.5
+		dust.scale_amount_max = 3.0
+		dust.color = Color(0.45, 0.4, 0.34, 0.55)
+		add_child(dust)
+	_dust_fx = $DustFX
+	
+	_dust_fx.emitting = false
+
+	# [TECH ART] Passo 19: inicializa a luz do Chama Negra (invisível até ganhar chama).
+	if chama_light:
+		chama_light.visible = false
+		chama_light.energy = 0.0
+	_update_chama_visual()  ## Passo 19: sincroniza emissão com a Chama Negra
+
+
+
+func get_facing() -> int:
+	## Usado pela capa (Cape2D) para saber detrás do sprite deve pendular.
+	return facing
 
 
 func _physics_process(delta: float) -> void:
@@ -230,12 +304,25 @@ func _physics_process(delta: float) -> void:
 			_process_locomotion(delta)
 
 	# --- Aplicação final do movimento ---
+	# Passo 16: captura a velocidade de impacto (usada no squash de aterrissagem).
+	_fall_impact_speed = velocity.y
 	move_and_slide()
 	_update_camera_shake(delta)
 
-	# Passo 12: poeira de aterrissagem.
-	if is_on_floor() and _was_airborne and land_fx:
-		land_fx.restart()
+	# Passo 12: poeira de aterrissagem + Passo 16: squash de impacto.
+	if is_on_floor() and _was_airborne:
+		if land_fx:
+			land_fx.restart()
+		# Deformação proporcional à velocidade da queda (achata na horizontal).
+		if not _landing_pending:
+			_landing_pending = true
+			var fall_factor := clampf(absf(_fall_impact_speed) * squash_fall_factor, 0.4, 1.3)
+			_apply_squash(false, fall_factor)
+		# Passo 17: nuvem de poeira ao aterrissar (reforza o impacto).
+		if _dust_fx:
+			_dust_fx.restart()
+	elif not is_on_floor():
+		_landing_pending = false  ## Reseta para detectar a próxima aterrissagem
 	_was_airborne = not is_on_floor()
 
 	# --- Atualiza estado "aéreo" com base no resultado físico ---
@@ -248,12 +335,31 @@ func _physics_process(delta: float) -> void:
 		else:
 			state = State.FALL
 
-	_update_visuals()
+	# Passo 16: os visuais (squash/lean/animação) são atualizados no _process,
+	# com o delta real do frame (interpolação em 120/144Hz+).
+
+	# Passo 17: poeira dos pés ao correr no chão.
+	if _dust_fx:
+		_dust_fx.emitting = is_on_floor() and state == State.WALK and absf(velocity.x) > 60.0
+
+
+# ===========================================================================
+# PASSO 16: ANIMAÇÃO FLUIDA — processa os visuais a cada frame renderizado
+# A física continua no _physics_process; aqui suavizamos squash & stretch e
+# o rotational lean com o delta de renderização (alta taxa de atualização).
+# ===========================================================================
+func _process(delta: float) -> void:
+	if sprite:
+		_update_visuals(delta)
+	# [TECH ART] Passo 19: atualiza a emissão do Chama Negra a cada frame.
+	_update_chama_visual()
 
 
 # ===========================================================================
 # LOCOMOÇÃO: chão + ar + pulo + entrada do dash
 # ===========================================================================
+
+
 func _process_locomotion(delta: float) -> void:
 	# Canalizando a cura: bloqueia movimento (estilo Hollow Knight).
 	if _is_healing:
@@ -335,9 +441,14 @@ func _do_jump() -> void:
 	coyote_timer = 0.0
 	jumps_left -= 1
 	state = State.JUMP
+	# Passo 16: estica na vertical — impulso da decolagem.
+	_apply_squash(true)
 	# Asas Caídas: jato de fumaça dourada no pulo aéreo.
 	if is_air_jump and wings_fx:
 		wings_fx.restart()
+	# Passo 17: puff de poeira dos pés na decolagem.
+	if _dust_fx:
+		_dust_fx.restart()
 
 
 # ===========================================================================
@@ -348,6 +459,8 @@ func _start_dash() -> void:
 	dash_timer = dash_duration
 	dash_cooldown_timer = dash_cooldown
 	_dash_hits.clear()
+	# Passo 16: estica na horizontal — o dash é um "corte" veloz.
+	_apply_squash(true, 0.6, true)
 	## Passo 12: rastro de fumaça e brasas do Dash de Sombra.
 	if dash_fx:
 		dash_fx.restart()
@@ -370,6 +483,12 @@ func _start_dash() -> void:
 func _process_dash(delta: float) -> void:
 	dash_timer -= delta
 
+	# Passo 17: rastro fantasma (afterimage) durante o Dash de Sombra.
+	_ghost_timer += delta
+	if _ghost_timer >= ghost_interval:
+		_ghost_timer = 0.0
+		_spawn_ghost()
+
 	# Durante o dash a gravidade é congelada: movimento puramente horizontal.
 	if dash_gravity_freeze:
 		velocity.y = 0.0
@@ -390,6 +509,26 @@ func _process_dash(delta: float) -> void:
 		# Sair do dash com velocidade moderada para transição suave.
 		velocity.x = dash_direction.x * max_speed
 		state = State.FALL
+
+
+## Passo 17: duplica a silhueta de Lúcifer na posição atual e a desvanece.
+func _spawn_ghost() -> void:
+	if sprite == null:
+		return
+	var ghost := Sprite2D.new()
+	ghost.texture = sprite.texture
+	ghost.hframes = sprite.hframes
+	ghost.frame = sprite.frame
+	ghost.flip_h = sprite.flip_h
+	ghost.global_position = sprite.global_position
+	ghost.scale = sprite.scale * 1.05
+	ghost.modulate = Color(0.7, 0.8, 0.9, ghost_alpha)
+	ghost.z_index = -2
+	get_parent().add_child(ghost)
+	var t := create_tween()
+	t.tween_property(ghost, "modulate:a", 0.0, ghost_lifetime).set_trans(Tween.TRANS_EXPO)
+	t.parallel().tween_property(ghost, "scale", sprite.scale * 1.3, ghost_lifetime).set_trans(Tween.TRANS_QUAD)
+	t.chain().tween_callback(ghost.queue_free)
 
 
 # ===========================================================================
@@ -476,6 +615,13 @@ func _check_melee_hits() -> void:
 			_gain_chama(chama_por_golpe)
 			GameState.hit_stop(0.035, 0.1)  ## Passo 13: hit stop no acerto
 
+			# Passo 17: faíscas no contato + sangue negro dos inimigos.
+			var contact := hitbox.global_position
+			FxUtil.spawn_sparks(contact, get_parent())
+			var is_destructible := area.is_in_group("destructible")
+			if not is_destructible and target != null and target.has_method("take_hit"):
+				FxUtil.spawn_blood(contact, get_parent())
+
 			# Sigilo "azazel_blade": alcance maior, mas drena vida por golpe.
 			if GameState.sigils_equipped.has("azazel_blade"):
 				current_health = maxi(current_health - 1, 1)
@@ -484,6 +630,8 @@ func _check_melee_hits() -> void:
 			# --- POGO STRIKE: golpe para baixo no ar rebate o Lúcifer ---
 			if _attack_dir == Direction.DOWN and not is_on_floor():
 				velocity.y = pogo_force
+				# Passo 16: rebate com uma leve esticada (impulso elástico).
+				_apply_squash(true, 0.7)
 				# Permite encadear outro pogo imediatamente (estilo HK).
 				_hits_this_swing.clear()
 				return
@@ -505,6 +653,8 @@ func _do_wall_jump() -> void:
 	coyote_timer = 0.0
 	jumps_left = _max_jumps() - 1  ## Wall jump não consome o pulo aéreo
 	state = State.JUMP
+	# Passo 16: estica na vertical — impulso da parede.
+	_apply_squash(true)
 
 
 func _process_wall_slide(delta: float) -> void:
@@ -542,8 +692,14 @@ func _process_ground_pound(delta: float) -> void:
 func _ground_pound_impact() -> void:
 	shake_camera(7.0, 0.25)
 	GameState.hit_stop(0.08, 0.15)  ## Passo 13: peso do impacto
+	# Passo 16: achatamento forte — peso do impacto no chão.
+	_apply_squash(false, 1.3)
 	if land_fx:
 		land_fx.restart()
+	# Passo 17: poeira + faíscas na onda de choque.
+	if _dust_fx:
+		_dust_fx.restart()
+	FxUtil.spawn_sparks(global_position + Vector2(0.0, 26.0), get_parent())
 
 	# Onda de choque: dano em área + quebra de pisos rachados.
 	for area in shockwave.get_overlapping_areas():
@@ -790,9 +946,10 @@ func apply_state(data: Dictionary) -> void:
 
 
 # ===========================================================================
-# VISUAIS PLACEHOLDER (animações reais chegam junto com o AnimationPlayer no Passo 3)
+# PASSO 16: VISUAIS FLUIDOS — Squash & Stretch + Rotational Lean
+# (animações reais chegam junto com o AnimationPlayer no Passo 3)
 # ===========================================================================
-func _update_visuals() -> void:
+func _update_visuals(delta: float) -> void:
 	# Passo "animação": troca a animação conforme a FSM.
 	var anim := "idle"
 	match state:
@@ -814,8 +971,14 @@ func _update_visuals() -> void:
 
 	if sprite:
 		sprite.flip_h = facing < 0
-		# Inclinação leve durante o dash para dar sensação de velocidade.
-		sprite.rotation = -0.15 * facing if state == State.DASH else 0.0
+
+		# --- SQUASH & STRETCH: deformação suavizada (elástica, estilo HK) ---
+		# A escala deformada converge de volta ao normal a cada frame renderizado.
+		_squash_scale = _squash_scale.lerp(Vector2.ONE, 1.0 - pow(0.001, delta * squash_speed))
+		sprite.scale = _sprite_base_scale * _squash_scale
+
+		# --- ROTATIONAL LEAN: inclinação dinâmica ao acelerar/frear/mudar de direção ---
+		sprite.rotation = _compute_lean(delta)
 
 		# I-frames: pisca em transparente (estilo Hollow Knight).
 		if _iframes_timer > 0.0:
@@ -828,3 +991,67 @@ func _update_visuals() -> void:
 			sprite.modulate = Color(1.5, 1.3, 0.7, 1.0)
 		else:
 			sprite.modulate = Color.WHITE
+
+
+## Passo 16: dispara uma deformação Squash & Stretch no sprite.
+##   stretch=true  → estica na vertical (pulo/pogo/wall jump); com horizontal=true estica na horizontal (dash).
+##   stretch=false → achata na horizontal (aterrissagem/ground pound).
+##   intensity_scale multiplica a intensidade base (queda alta, impacto forte, etc.).
+func _apply_squash(stretch: bool, intensity_scale: float = 1.0, horizontal: bool = false) -> void:
+	var s := squash_intensity * clampf(intensity_scale, 0.25, 1.5)
+	if horizontal:
+		_squash_scale = Vector2(1.0 + s, 1.0 - s)   ## Estica na horizontal (dash)
+	elif stretch:
+		_squash_scale = Vector2(1.0 - s, 1.0 + s)   ## Estica na vertical (impulso)
+	else:
+		_squash_scale = Vector2(1.0 + s, 1.0 - s)   ## Achata na horizontal (impacto)
+
+
+## Passo 16: calcula a inclinação suavizada do sprite (Rotational Lean).
+##   Acelerando   → inclina para a frente (sentido do facing).
+##   Freando/mudança brusca/sem input com velocidade → inclina para trás.
+##   Dash usa a inclinacao dedicada (lean_dash_tilt).
+func _compute_lean(delta: float) -> float:
+	var lean_target := 0.0
+	if state == State.DASH:
+		lean_target = -lean_dash_tilt * facing
+	elif _is_healing or state == State.GROUND_POUND or state == State.WALL_SLIDE:
+		lean_target = 0.0  ## Posturas fixas nao inclinam
+	else:
+		var input_dir := Input.get_axis("move_left", "move_right")
+		var vel_dir := signf(velocity.x) if absf(velocity.x) > 20.0 else 0.0
+		# Fator 0..1 conforme a velocidade real (para a inclinacao "crescer" suave).
+		var speed_factor := clampf(absf(velocity.x) / max_speed, 0.0, 1.0)
+		if input_dir != 0.0:
+			if vel_dir == 0.0 or vel_dir == signf(input_dir):
+				lean_target = -lean_intensity * facing * speed_factor  ## Acelerando -> frente
+			else:
+				lean_target = lean_intensity * facing * speed_factor   ## Mudanca brusca -> tras
+		elif speed_factor > 0.06:
+			lean_target = lean_intensity * facing * speed_factor       ## Derrapagem -> tras
+	_lean_angle = lerpf(_lean_angle, lean_target, 1.0 - pow(0.001, delta * lean_speed))
+	return _lean_angle
+
+
+
+
+
+# ===========================================================================
+# [TECH ART] PASSO 19: CHAMA NEGRA - luz emissiva que brilha con bloom
+# ===========================================================================
+## Sincroniza la luz PointLight2D "ChamaNegra" com el valor de chama_negra.
+## - visible solo hay chama suficiente (más de ~5% del máximo)
+## - intensidad (energy) proporcional al porcentaje de chama
+## - color se calienta al cargar (rojo/ámbar) y se enfría al gastar (negro)
+## Conectado al LightingManager que multiplica la energía con emissive_boost.
+func _update_chama_visual() -> void:
+	if chama_light == null:
+		return
+	var pct := chama_negra / chama_max  ## 0.0 .. 1.0
+	chama_light.visible = pct > 0.05
+	chama_light.energy = lerpf(0.0, 2.8, pct * pct)  ## curva gamma: brilha mais no final
+	## El color va de negro frío (vacío) a rojo/ámbar (chama viva).
+	var cold := Color(0.3, 0.15, 0.08)
+	var hot := Color(0.95, 0.65, 0.2)
+	chama_light.color = cold.lerp(hot, pct)
+

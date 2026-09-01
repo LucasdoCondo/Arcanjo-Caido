@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/reflective_surface.gd" id="1_s"]
+[ext_resource type="Shader" path="res://shaders/mirror_water.gdshader" id="2_sh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mirror"]
+shader = ExtResource("2_sh")
+
+[node name="ReflectiveSurface" type="ColorRect"]
+script = ExtResource("1_s")
+material = SubResource("ShaderMaterial_mirror")
+offset_left = -240.0
+offset_top = 0.0
+offset_right = 240.0
+offset_bottom = 90.0
+color = Color(0.2, 0.4, 0.5, 0.5)

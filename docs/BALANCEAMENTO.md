@@ -19,6 +19,19 @@ Godot sem tocar em código. Use esta tabela como referência ao equilibrar.
 | heal_cost / channel | 33 / 0.8s | |
 | pogo_force | -560 | |
 | iframes_duration | 1.0s | |
+| coyote_time / jump_buffer_time | 0.1s / 0.12s | Passo 16: pulo "perdoador" |
+| squash_intensity / speed | 0.10 / 10 | Passo 16: deformação elástica ao pular/aterrissar |
+| lean_intensity / speed | 0.09 rad / 8 | Passo 16: inclinação ao acelerar/frear |
+| ghost_interval / ghost_alpha / ghost_lifetime | 0.03s / 0.5 / 0.3s | Passo 17: afterimages do dash |
+| capa: segments / drag / draft_scale | 6 / 0.86 / 0.02 | Passo 17: física da capa |
+| vegetação: influence_radius / max_bend | 70px / 0.6 rad | Passo 18: props reativos |
+| destruibles: shards_count / shard_velocity | 6 / 240 | Passo 18: props destruíveis |
+| tech art: glow_intensity / bloom_threshold | 0.7 / 1.0 | Passo 19: intensidadade do bloom HDR |
+| tech art: emissive_boost / ambient_flicker | 1.35 / 0.0 | Passo 19: multiplica energia de luces emissive |
+| tech art: tonemap_exposure / white | 1.0 / 1.0 | Passo 19: exposición do Filmic tonemapper |
+| tech art: vignette_intensity (range) | 0.45 (0.0–1.0) | Passo 19: escurecimento das bordas |
+| tech art: fog_speed / max_alpha | 0.02 / 0.25 | Passo 19: névoa volumétrica 2D |
+| tech art: chama_light energy (por pct) | 0..2.8 (curva gamma) | Passo 19: brilho do Chama Negra con bloom |
 
 ## 👹 Inimigos (enemy_base.gd — padrões)
 

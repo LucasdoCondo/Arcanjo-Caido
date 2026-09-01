@@ -113,6 +113,7 @@ DialogueUI="*res://scripts/ui/dialogue_ui.gd"
 [physics]
 
 2d/default_gravity=980
+common/physics_interpolation=true
 
 [rendering]
 

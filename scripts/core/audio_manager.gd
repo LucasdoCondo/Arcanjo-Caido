@@ -7,7 +7,7 @@ extends Node
 ##   - Crossfade suave entre trilhas ao mudar de região / entrar em chefe
 ##   - SFX globais: AudioManager.sfx("jump" | "sword" | "hurt" | "coin" ...)
 ##   - Como o projeto ainda não tem assets de áudio, os sons e as trilhas são
-##     SINTETIZADOS em tempo real (AudioStreamWav gerado por código). Quando
+##     SINTETIZADOS em tempo real (AudioStreamWAV gerado por código). Quando
 ##     os .ogg/.wav reais chegarem, basta trocar os streams deste arquivo.
 ## ============================================================================
 
@@ -95,7 +95,7 @@ func get_bus_volume(bus_name: String) -> float:
 # ===========================================================================
 # SINTETIZADOR (substituível por assets reais no futuro)
 # ===========================================================================
-func _make_tone(freq: float, dur: float, kind: String = "sine", vol: float = 0.5) -> AudioStreamWav:
+func _make_tone(freq: float, dur: float, kind: String = "sine", vol: float = 0.5) -> AudioStreamWAV:
 	var n := int(dur * SAMPLE_RATE)
 	var data := PackedByteArray()
 	data.resize(n * 2)
@@ -117,7 +117,7 @@ func _make_tone(freq: float, dur: float, kind: String = "sine", vol: float = 0.5
 	return _wav_from_data(data, false)
 
 
-func _make_track(base_freq: float, mood: String = "calmo") -> AudioStreamWav:
+func _make_track(base_freq: float, mood: String = "calmo") -> AudioStreamWAV:
 	## Trilha em loop: camadas de senoides com LFOs lentos (protótipo de BGM).
 	var dur := 12.0 if mood == "calmo" else 9.0
 	var n := int(dur * SAMPLE_RATE)
@@ -136,14 +136,14 @@ func _make_track(base_freq: float, mood: String = "calmo") -> AudioStreamWav:
 	return _wav_from_data(data, true)
 
 
-func _wav_from_data(data: PackedByteArray, looping: bool) -> AudioStreamWav:
-	var wav := AudioStreamWav.new()
-	wav.format = AudioStreamWav.FORMAT_16_BITS
+func _wav_from_data(data: PackedByteArray, looping: bool) -> AudioStreamWAV:
+	var wav: AudioStreamWAV = AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
 	wav.mix_rate = SAMPLE_RATE
 	wav.stereo = false
 	wav.data = data
 	if looping:
-		wav.loop_mode = AudioStreamWav.LOOP_FORWARD
+		wav.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		wav.loop_begin = 0
 		wav.loop_end = data.size() / 2
 	return wav
@@ -169,7 +169,7 @@ func _synth_sounds() -> void:
 # ===========================================================================
 func sfx(sound_name: String) -> void:
 	## Trigger global de efeito sonoro: AudioManager.sfx("sword")
-	var stream: AudioStreamWav = _sounds.get(sound_name)
+	var stream: AudioStreamWAV = _sounds.get(sound_name)
 	if stream == null:
 		return
 	var p := _sfx_players[_sfx_idx]
@@ -199,11 +199,11 @@ func play_music(track_id: String, fade: float = 1.5) -> void:
 	tw.chain().tween_callback(outgoing.stop)
 
 
-func _get_track(track_id: String) -> AudioStreamWav:
+func _get_track(track_id: String) -> AudioStreamWAV:
 	if _tracks.has(track_id):
 		return _tracks[track_id]
 	var def: Array = TRACK_DEFS.get(track_id, [110.0, "calmo"])
-	var track := _make_track(def[0], def[1])
+	var track: AudioStreamWAV = _make_track(def[0], def[1])
 	_tracks[track_id] = track
 	return track
 
@@ -212,7 +212,7 @@ func play_ambience(sound_name: String = "wind") -> void:
 	## Camada de ambiente contínua (vento do Vazio etc.).
 	if _ambience_player.playing:
 		return
-	var stream: AudioStreamWav = _sounds.get(sound_name)
+	var stream: AudioStreamWAV = _sounds.get(sound_name)
 	if stream == null:
 		stream = _make_tone(90.0, 3.0, "noise", 0.12)
 		_sounds[sound_name] = stream

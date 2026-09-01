@@ -29,6 +29,7 @@ ambient_color = Color(0.55, 0.42, 0.3, 1)
 adjust_saturation = 1.15
 adjust_brightness = 1.05
 vignette_intensity = 0.4
+color_profile = 2
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10
