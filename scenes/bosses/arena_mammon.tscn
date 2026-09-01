@@ -1,0 +1,94 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/room.gd" id="1_room"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/world/porta_passagem.tscn" id="3_porta"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/mammon_boss.tscn" id="4_mammon"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/onda_de_choque.tscn" id="5_wave"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/moeda_incandescente.tscn" id="6_coin"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/prata_judas.tscn" id="7_loot"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/lingote.tscn" id="8_ingot"]
+[ext_resource type="PackedScene" path="res://scenes/world/tocha.tscn" id="9_tocha"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(1600, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(40, 800)
+
+[node name="ArenaMammon" type="Node2D"]
+script = ExtResource("1_room")
+room_id = "catedral_avareza"
+room_name = "Catedral da Avareza"
+grid_col = 3
+grid_row = 0
+grid_w = 1
+grid_h = 1
+connections = PackedStringArray("corredor_cinzas")
+ambient_color = Color(0.55, 0.42, 0.3, 1)
+adjust_saturation = 1.15
+adjust_brightness = 1.05
+vignette_intensity = 0.4
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 1600.0
+offset_bottom = 1000.0
+color = Color(0.07, 0.06, 0.04, 1)
+
+[node name="Chao" type="StaticBody2D" parent="."]
+position = Vector2(800, 760)
+
+[node name="Visual" type="ColorRect" parent="Chao"]
+offset_left = -800.0
+offset_top = -40.0
+offset_right = 800.0
+offset_bottom = 40.0
+color = Color(0.2, 0.17, 0.1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Chao"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="ParedeOeste" type="StaticBody2D" parent="."]
+position = Vector2(20, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParedeOeste"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="ParedeLeste" type="StaticBody2D" parent="."]
+position = Vector2(1580, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParedeLeste"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="PortaOeste" parent="." instance=ExtResource("3_porta")]
+position = Vector2(70, 640)
+target_scene = "res://scenes/test/sala_teste_02.tscn"
+target_spawn = "SpawnPortaLeste"
+
+[node name="Mammon" parent="." instance=ExtResource("4_mammon")]
+position = Vector2(1150, 660)
+max_hp = 80
+shockwave_scene = ExtResource("5_wave")
+falling_hazard_scene = ExtResource("6_coin")
+ingot_scene = ExtResource("8_ingot")
+loot_scene = ExtResource("7_loot")
+arena_min_x = 150.0
+arena_max_x = 1450.0
+floor_y = 720.0
+ceiling_y = 80.0
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(160, 600)
+
+[node name="SpawnEntrada" type="Marker2D" parent="."]
+position = Vector2(150, 640)
+
+[node name="Tocha1" parent="." instance=ExtResource("9_tocha")]
+position = Vector2(350, 660)
+
+[node name="Tocha2" parent="." instance=ExtResource("9_tocha")]
+position = Vector2(800, 660)
+
+[node name="Tocha3" parent="." instance=ExtResource("9_tocha")]
+position = Vector2(1350, 660)

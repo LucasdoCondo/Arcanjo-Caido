@@ -1,0 +1,212 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/lucifer_sheet.svg" id="2_tex"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(24, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hitbox"]
+size = Vector2(46, 36)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_player"]
+polygon = PackedVector2Array(-10, -26, 10, -26, 10, 26, -10, 26)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_shock"]
+radius = 90.0
+
+[sub_resource type="Gradient" id="Gradient_aura"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(1, 0.88, 0.65, 0.5, 1, 0.85, 0.6, 0.22, 1, 0.85, 0.6, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_aura"]
+gradient = SubResource("Gradient_aura")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Animation" id="Animation_idle"]
+resource_name = "idle"
+length = 1.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.6), "transitions": PackedFloat32Array(1, 1), "update": 1, "values": [0, 1]}
+
+[sub_resource type="Animation" id="Animation_walk"]
+resource_name = "walk"
+length = 0.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.15, 0.3, 0.45), "transitions": PackedFloat32Array(1, 1, 1, 1), "update": 1, "values": [2, 3, 4, 5]}
+
+[sub_resource type="Animation" id="Animation_jump"]
+resource_name = "jump"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0), "transitions": PackedFloat32Array(1), "update": 1, "values": [6]}
+
+[sub_resource type="Animation" id="Animation_fall"]
+resource_name = "fall"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0), "transitions": PackedFloat32Array(1), "update": 1, "values": [7]}
+
+[sub_resource type="Animation" id="Animation_dash"]
+resource_name = "dash"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0), "transitions": PackedFloat32Array(1), "update": 1, "values": [8]}
+
+[sub_resource type="Animation" id="Animation_attack"]
+resource_name = "attack"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {"times": PackedFloat32Array(0), "transitions": PackedFloat32Array(1), "update": 1, "values": [9]}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_player"]
+_data = {
+&"attack": SubResource("Animation_attack"),
+&"dash": SubResource("Animation_dash"),
+&"fall": SubResource("Animation_fall"),
+&"idle": SubResource("Animation_idle"),
+&"jump": SubResource("Animation_jump"),
+&"walk": SubResource("Animation_walk")
+}
+
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_tex")
+hframes = 10
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_player")
+}
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="MeleeHitbox" type="Area2D" parent="."]
+position = Vector2(34, 4)
+collision_layer = 8
+collision_mask = 8
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeHitbox"]
+shape = SubResource("RectangleShape2D_hitbox")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="WallRayLeft" type="RayCast2D" parent="."]
+position = Vector2(0, 4)
+target_position = Vector2(-16, 0)
+
+[node name="WallRayRight" type="RayCast2D" parent="."]
+position = Vector2(0, 4)
+target_position = Vector2(16, 0)
+
+[node name="WingsFX" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 14
+one_shot = true
+explosiveness = 1.0
+lifetime = 0.45
+direction = Vector2(0, -1)
+spread = 180.0
+gravity = Vector2(0, 240)
+initial_velocity_min = 60.0
+initial_velocity_max = 150.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(1, 0.9, 0.6, 0.9)
+
+[node name="Shockwave" type="Area2D" parent="."]
+position = Vector2(0, 34)
+collision_layer = 8
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Shockwave"]
+shape = SubResource("CircleShape2D_shock")
+
+[node name="HookLine" type="Line2D" parent="."]
+visible = false
+width = 3.0
+default_color = Color(0.83, 0.69, 0.22, 0.9)
+
+[node name="Aura" type="PointLight2D" parent="."]
+color = Color(1, 0.9, 0.7, 1)
+energy = 1.1
+texture = SubResource("GradientTexture2D_aura")
+
+[node name="Occluder" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_player")
+
+[node name="DashFX" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 14
+one_shot = true
+explosiveness = 1.0
+lifetime = 0.4
+direction = Vector2(-1, -0.3)
+spread = 35.0
+gravity = Vector2(0, 60)
+initial_velocity_min = 90.0
+initial_velocity_max = 180.0
+scale_amount_min = 2.0
+scale_amount_max = 4.5
+color = Color(0.6, 0.6, 0.65, 0.8)
+
+[node name="LandFX" type="CPUParticles2D" parent="."]
+position = Vector2(0, 30)
+emitting = false
+amount = 12
+one_shot = true
+explosiveness = 1.0
+lifetime = 0.35
+direction = Vector2(0, -1)
+spread = 80.0
+gravity = Vector2(0, 300)
+initial_velocity_min = 60.0
+initial_velocity_max = 140.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(0.55, 0.52, 0.48, 0.8)

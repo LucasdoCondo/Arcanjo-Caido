@@ -1,0 +1,79 @@
+Parte 1: Design de Inimigos e Bosses (Fases e Padrões)
+Para garantir batalhas memoráveis e exigentes no estilo Metroidvania, cada chefe possui padrões claros de leitura, fases de transição e escalada de agressividade.
+
+1. Lilith, a Primeira Exilada (Guardia dos Jardins de Babilônia)
+
+Estilo de Luta: Agilidade extrema, ilusões e controle de área com magia de sangue.
+
+Fase 1 (A Doutrinadora):
+
+Dança das Lâminas: Teleporta acima de Lúcifer e lança 3 adagas de sangue em leque.
+
+Investida Sombra: Executa um dash rápido pela arena deixando um rastro cortante.
+
+Fase 2 (A Rainha das Ilusões - 50% de Vida):
+
+Espelho de Sangue: Cria duas cópias ilusórias que replicam seus ataques com menor dano. Apenas a original sofre dano real.
+
+Chuva de Rosas Espinhosas: A arena é coberta por vinhas escuras, reduzindo o espaço seguro de esquiva.
+
+2. Belzebuth, o Senhor da Pestilência (Pré-Chefe Final)
+
+Estilo de Luta: Batalha de alta velocidade com mudança de terreno e hordas de projéteis.
+
+Fase 1 (Guerreiro Decadente):
+
+Lança de Enxame: Golpes frontais pesados com uma lança composta por insetos rígidos.
+
+Erupção Praga: Bate a lança no chão, fazendo surgir gêiseres de ácido na arena.
+
+Fase 2 (Forma Insetóide Rastejante - 40% de Vida):
+
+Belzebuth perde as pernas, ganha asas carcomidas e passa a voar.
+
+Nuvem de Devoradores: Convoca pequenos insetos perseguidores que o jogador deve destruir ou esquivar usando o Passo das Sombras.
+
+3. Mammon, o Ingestionável (Chefe Final)
+
+Estilo de Luta: Colossal, lento, mas com ataques de dano devastador e mecânica de ganância.
+
+Fase 1 (O Rei de Ouro):
+
+Combate fundido ao trono. Ataca com punhos gigantes de metal derretido e lança moedas incandescentes do teto.
+
+Fase 2 (Avatar da Avareza - 50% de Vida):
+
+O trono desmorona e Mammon revela sua verdadeira forma: uma abominação disforme de ouro e ossos.
+
+Chuva da Avareza: O teto desmorona com lingotes pesados que criam ondas de choque no chão (exige pulo duplo no timing exato).
+
+Dreno de Almas: Suga a Chama Negra de Lúcifer se o jogador ficar muito tempo próximo sem atacar.
+
+Parte 2: Sistema de Lore, Diálogos e Conquistas
+1. Scripts de Interações com NPCs
+Encontro com Azazel (O Anjo Acorrentado no Vale da Geena)
+
+Azazel: "Lúcifer... é você sob essa armadura desgraçada? Nós caímos do céu para este esgoto de ouro e ferrugem. Diga-me, meu senhor... o Pai ainda se lembra de nossos nomes, ou somos apenas cinzas sob os pés dos novos deuses?"
+
+Opções de Resposta do Jogador:
+
+[Dar Esperança]: "Enquanto eu empunhar esta lâmina, nossa história não será apagada."
+
+[Aceitar a Realidade]: "Não há Pai aqui. Apenas nós e a nossa ruína."
+
+Encontro com Cassandra (A Cartógrafa Cega)
+
+Cassandra: "Ouço o arrastar de suas botas no cascalho... A forma como você pisa revela o peso das asas que já teve. Tome este mapa da Cripta. Ele está incompleto, mas sua mente terá que desenhar o resto."
+
+2. Lista de Conquistas (Achievements para o Jogo Offline)
+O Primeiro Tombo (Bronze): Desperte na Cripta das Estrelas Caídas.
+
+Luz Ressoante (Prata): Colete todos os 12 fragmentos da Lâmina do Alvorecer.
+
+Misericórdia ou Maldição? (Prata): Complete a linha de quests de Azazel.
+
+Mestre das Relíquias (Ouro): Obtenha todos os Sigilos do Banimento.
+
+Soberano do Vazio (Ouro): Derrote Mammon e reivindique o Trono de Aeterna.
+
+A Verdadeira Libertação (Platina/100%): Alcance o Final Verdadeiro destruindo a estrutura de Aeterna após derrotar todos os bosses opcionais.

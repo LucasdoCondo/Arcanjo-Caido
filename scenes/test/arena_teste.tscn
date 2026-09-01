@@ -1,0 +1,132 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/test/dummy_alvo.tscn" id="2_dummy"]
+[ext_resource type="PackedScene" path="res://scenes/test/espinhos_teste.tscn" id="3_hazard"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/guardiao_caido.tscn" id="4_guardiao"]
+[ext_resource type="Script" path="res://scripts/core/room.gd" id="5_room"]
+[ext_resource type="PackedScene" path="res://scenes/world/porta_passagem.tscn" id="6_porta"]
+[ext_resource type="PackedScene" path="res://scenes/world/tocha.tscn" id="7_tocha"]
+[ext_resource type="PackedScene" path="res://scenes/world/estatua_descanso.tscn" id="8_bench"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/npc_base.tscn" id="9_npc"]
+[ext_resource type="PackedScene" path="res://scenes/world/memoria.tscn" id="10_mem"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(2400, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat"]
+size = Vector2(360, 32)
+
+[node name="ArenaTeste" type="Node2D"]
+script = ExtResource("5_room")
+room_id = "cripta_estrelas"
+room_name = "Cripta das Estrelas Caídas"
+grid_col = 0
+grid_row = 0
+grid_w = 2
+grid_h = 1
+connections = PackedStringArray("corredor_cinzas")
+has_bench = true
+adjust_saturation = 0.9
+vignette_intensity = 0.55
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 2400.0
+offset_bottom = 1000.0
+color = Color(0.05, 0.05, 0.08, 1)
+
+[node name="Chao" type="StaticBody2D" parent="."]
+position = Vector2(1200, 760)
+
+[node name="Visual" type="ColorRect" parent="Chao"]
+offset_left = -1200.0
+offset_top = -40.0
+offset_right = 1200.0
+offset_bottom = 40.0
+color = Color(0.13, 0.12, 0.16, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Chao"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Plataforma1" type="StaticBody2D" parent="."]
+position = Vector2(700, 600)
+
+[node name="Visual" type="ColorRect" parent="Plataforma1"]
+offset_left = -180.0
+offset_top = -16.0
+offset_right = 180.0
+offset_bottom = 16.0
+color = Color(0.18, 0.17, 0.22, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plataforma1"]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="Plataforma2" type="StaticBody2D" parent="."]
+position = Vector2(1250, 480)
+
+[node name="Visual" type="ColorRect" parent="Plataforma2"]
+offset_left = -180.0
+offset_top = -16.0
+offset_right = 180.0
+offset_bottom = 16.0
+color = Color(0.18, 0.17, 0.22, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plataforma2"]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="Plataforma3" type="StaticBody2D" parent="."]
+position = Vector2(1800, 580)
+
+[node name="Visual" type="ColorRect" parent="Plataforma3"]
+offset_left = -180.0
+offset_top = -16.0
+offset_right = 180.0
+offset_bottom = 16.0
+color = Color(0.18, 0.17, 0.22, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plataforma3"]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(300, 600)
+
+[node name="DummyAlvo" parent="." instance=ExtResource("2_dummy")]
+position = Vector2(1250, 430)
+
+[node name="EspinhosTeste" parent="." instance=ExtResource("3_hazard")]
+position = Vector2(1800, 706)
+
+[node name="Guardiao1" parent="." instance=ExtResource("4_guardiao")]
+position = Vector2(650, 692)
+
+[node name="Guardiao2" parent="." instance=ExtResource("4_guardiao")]
+position = Vector2(1650, 692)
+
+[node name="PortaLeste" parent="." instance=ExtResource("6_porta")]
+position = Vector2(2340, 640)
+target_scene = "res://scenes/test/sala_teste_02.tscn"
+target_spawn = "SpawnPortaOeste"
+
+[node name="SpawnPortaLeste" type="Marker2D" parent="."]
+position = Vector2(2240, 640)
+
+[node name="Tocha1" parent="." instance=ExtResource("7_tocha")]
+position = Vector2(400, 660)
+
+[node name="Tocha2" parent="." instance=ExtResource("7_tocha")]
+position = Vector2(1100, 660)
+
+[node name="Tocha3" parent="." instance=ExtResource("7_tocha")]
+position = Vector2(2000, 660)
+
+[node name="EstatuaDescanso" parent="." instance=ExtResource("8_bench")]
+position = Vector2(150, 720)
+
+[node name="Mormo" parent="." instance=ExtResource("9_npc")]
+position = Vector2(950, 720)
+dialogue_id = "mormo"
+
+[node name="MemoriaQueda" parent="." instance=ExtResource("10_mem")]
+position = Vector2(1900, 560)
+memoria_id = "1"

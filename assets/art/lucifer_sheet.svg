@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="128" viewBox="0 0 640 128">
+<!-- ARCANJO CAIDO - Lúcifer: sheet 10 frames (64x128 cada)
+     0-1: idle | 2-5: walk | 6: jump | 7: fall | 8: dash | 9: attack -->
+<defs>
+  <g id="head">
+    <rect x="24" y="10" width="16" height="14" fill="#1a1a22" stroke="#4a4a5a" stroke-width="1.5"/>
+    <rect x="27" y="15" width="3" height="3" fill="#ff5533"/>
+    <rect x="34" y="15" width="3" height="3" fill="#ff5533"/>
+  </g>
+  <g id="torso">
+    <rect x="20" y="26" width="24" height="34" fill="#1a1a22" stroke="#4a4a5a" stroke-width="1.5"/>
+    <rect x="20" y="44" width="24" height="3" fill="#4a4a5a"/>
+  </g>
+</defs>
+
+<!-- FRAME 0: idle -->
+<g transform="translate(0,0)">
+  <path d="M20 6 A12 12 0 0 1 44 6" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="8 5"/>
+  <use href="#head"/><use href="#torso"/>
+  <rect x="23" y="60" width="7" height="30" fill="#14141b"/>
+  <rect x="34" y="60" width="7" height="30" fill="#14141b"/>
+  <rect x="14" y="28" width="6" height="22" fill="#14141b"/>
+  <rect x="44" y="28" width="6" height="22" fill="#14141b"/>
+</g>
+
+<!-- FRAME 1: idle bob -->
+<g transform="translate(64,0)">
+  <g transform="translate(0,-3)">
+    <path d="M20 6 A12 12 0 0 1 44 6" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="8 5"/>
+    <use href="#head"/><use href="#torso"/>
+    <rect x="23" y="60" width="7" height="30" fill="#14141b"/>
+    <rect x="34" y="60" width="7" height="30" fill="#14141b"/>
+    <rect x="14" y="28" width="6" height="22" fill="#14141b"/>
+    <rect x="44" y="28" width="6" height="22" fill="#14141b"/>
+  </g>
+</g>
+
+<!-- FRAME 2: walk A -->
+<g transform="translate(128,0)">
+  <g transform="rotate(-4 32 64)">
+    <use href="#head"/><use href="#torso"/>
+    <rect x="18" y="60" width="7" height="27" fill="#14141b"/>
+    <rect x="39" y="60" width="7" height="25" fill="#14141b"/>
+    <rect x="12" y="30" width="6" height="20" fill="#14141b"/>
+    <rect x="46" y="28" width="6" height="20" fill="#14141b"/>
+  </g>
+</g>
+
+<!-- FRAME 3: walk B -->
+<g transform="translate(192,0)">
+  <use href="#head"/><use href="#torso"/>
+  <rect x="24" y="60" width="7" height="28" fill="#14141b"/>
+  <rect x="33" y="60" width="7" height="28" fill="#14141b"/>
+  <rect x="14" y="29" width="6" height="21" fill="#14141b"/>
+  <rect x="44" y="29" width="6" height="21" fill="#14141b"/>
+</g>
+
+<!-- FRAME 4: walk C -->
+<g transform="translate(256,0)">
+  <g transform="rotate(4 32 64)">
+    <use href="#head"/><use href="#torso"/>
+    <rect x="19" y="60" width="7" height="25" fill="#14141b"/>
+    <rect x="38" y="60" width="7" height="27" fill="#14141b"/>
+    <rect x="12" y="28" width="6" height="20" fill="#14141b"/>
+    <rect x="46" y="30" width="6" height="20" fill="#14141b"/>
+  </g>
+</g>
+
+<!-- FRAME 5: walk B2 -->
+<g transform="translate(320,0)">
+  <use href="#head"/><use href="#torso"/>
+  <rect x="24" y="61" width="7" height="28" fill="#14141b"/>
+  <rect x="33" y="61" width="7" height="28" fill="#14141b"/>
+  <rect x="14" y="29" width="6" height="21" fill="#14141b"/>
+  <rect x="44" y="29" width="6" height="21" fill="#14141b"/>
+</g>
+
+<!-- FRAME 6: jump -->
+<g transform="translate(384,0)">
+  <use href="#head"/><use href="#torso"/>
+  <rect x="25" y="60" width="6" height="14" fill="#14141b"/>
+  <rect x="33" y="60" width="6" height="14" fill="#14141b"/>
+  <rect x="12" y="12" width="6" height="20" fill="#14141b"/>
+  <rect x="46" y="12" width="6" height="20" fill="#14141b"/>
+</g>
+
+<!-- FRAME 7: fall -->
+<g transform="translate(448,0)">
+  <use href="#head"/><use href="#torso"/>
+  <rect x="21" y="60" width="7" height="34" fill="#14141b"/>
+  <rect x="36" y="60" width="7" height="34" fill="#14141b"/>
+  <rect x="8" y="26" width="12" height="6" fill="#14141b"/>
+  <rect x="44" y="26" width="12" height="6" fill="#14141b"/>
+</g>
+
+<!-- FRAME 8: dash -->
+<g transform="translate(512,0)">
+  <rect x="2" y="40" width="10" height="3" fill="#8a8a9a" opacity="0.5"/>
+  <rect x="0" y="56" width="12" height="3" fill="#8a8a9a" opacity="0.4"/>
+  <g transform="rotate(-10 32 64)">
+    <use href="#head"/><use href="#torso"/>
+    <rect x="22" y="60" width="7" height="26" fill="#14141b"/>
+    <rect x="35" y="60" width="7" height="24" fill="#14141b"/>
+    <rect x="14" y="28" width="6" height="22" fill="#14141b"/>
+    <rect x="46" y="26" width="6" height="18" fill="#14141b"/>
+  </g>
+</g>
+
+<!-- FRAME 9: attack -->
+<g transform="translate(576,0)">
+  <g transform="rotate(-6 32 64)">
+    <use href="#head"/><use href="#torso"/>
+    <rect x="22" y="60" width="7" height="28" fill="#14141b"/>
+    <rect x="34" y="60" width="7" height="28" fill="#14141b"/>
+    <rect x="14" y="28" width="6" height="22" fill="#14141b"/>
+  </g>
+  <rect x="44" y="28" width="8" height="8" fill="#4a4a5a"/>
+  <rect x="52" y="30" width="10" height="4" fill="#e8e8ff" opacity="0.95"/>
+  <rect x="50" y="27" width="14" height="10" fill="#aaddff" opacity="0.25"/>
+</g>
+</svg>

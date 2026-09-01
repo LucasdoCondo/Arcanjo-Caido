@@ -1,0 +1,13 @@
+# Godot 4 — arquivos gerados
+.godot/
+*.translation
+build/
+
+# Sistema
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Backups de editor
+*.tmp
+*~

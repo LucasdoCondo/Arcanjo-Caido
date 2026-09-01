@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/reliquia_habilidade.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_relic"]
+size = Vector2(24, 24)
+
+[node name="ReliquiaHabilidade" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="Glow" type="ColorRect" parent="."]
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+color = Color(0.83, 0.69, 0.22, 0.25)
+
+[node name="Visual" type="ColorRect" parent="."]
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 7.0
+offset_bottom = 7.0
+color = Color(0.95, 0.8, 0.3, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_relic")

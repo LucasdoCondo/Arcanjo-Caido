@@ -1,0 +1,115 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/room.gd" id="1_room"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/world/porta_passagem.tscn" id="3_porta"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/espectro_jardim.tscn" id="4_espectro"]
+[ext_resource type="PackedScene" path="res://scenes/world/tocha.tscn" id="5_tocha"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(2400, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(40, 800)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat"]
+size = Vector2(320, 32)
+
+[node name="JardimAdonai" type="Node2D"]
+script = ExtResource("1_room")
+room_id = "jardim_adonai"
+room_name = "Jardim de Adonai-Gal"
+grid_col = 2
+grid_row = 1
+grid_w = 2
+grid_h = 1
+connections = PackedStringArray("corredor_cinzas", "mar_de_vidro")
+ambient_color = Color(0.32, 0.5, 0.38, 1)
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 2400.0
+offset_bottom = 1000.0
+color = Color(0.05, 0.08, 0.06, 1)
+
+[node name="Chao" type="StaticBody2D" parent="."]
+position = Vector2(1200, 760)
+
+[node name="Visual" type="ColorRect" parent="Chao"]
+offset_left = -1200.0
+offset_top = -40.0
+offset_right = 1200.0
+offset_bottom = 40.0
+color = Color(0.12, 0.18, 0.12, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Chao"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="ParedeOeste" type="StaticBody2D" parent="."]
+position = Vector2(20, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParedeOeste"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="ParedeLeste" type="StaticBody2D" parent="."]
+position = Vector2(2380, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParedeLeste"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Plataforma1" type="StaticBody2D" parent="."]
+position = Vector2(800, 560)
+
+[node name="Visual" type="ColorRect" parent="Plataforma1"]
+offset_left = -160.0
+offset_top = -16.0
+offset_right = 160.0
+offset_bottom = 16.0
+color = Color(0.16, 0.24, 0.16, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plataforma1"]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="Plataforma2" type="StaticBody2D" parent="."]
+position = Vector2(1600, 500)
+
+[node name="Visual" type="ColorRect" parent="Plataforma2"]
+offset_left = -160.0
+offset_top = -16.0
+offset_right = 160.0
+offset_bottom = 16.0
+color = Color(0.16, 0.24, 0.16, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plataforma2"]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="PortaOeste" parent="." instance=ExtResource("3_porta")]
+position = Vector2(70, 640)
+target_scene = "res://scenes/test/sala_teste_02.tscn"
+target_spawn = "SpawnPortaJardim"
+
+[node name="PortaLeste" parent="." instance=ExtResource("3_porta")]
+position = Vector2(2330, 640)
+target_scene = "res://scenes/biomas/mar_de_vidro.tscn"
+target_spawn = "SpawnOeste"
+
+[node name="Espectro1" parent="." instance=ExtResource("4_espectro")]
+position = Vector2(900, 400)
+
+[node name="Espectro2" parent="." instance=ExtResource("4_espectro")]
+position = Vector2(1800, 340)
+
+[node name="Tocha1" parent="." instance=ExtResource("5_tocha")]
+position = Vector2(500, 660)
+
+[node name="Tocha2" parent="." instance=ExtResource("5_tocha")]
+position = Vector2(1900, 660)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(200, 600)
+
+[node name="SpawnOeste" type="Marker2D" parent="."]
+position = Vector2(150, 640)
+
+[node name="SpawnLeste" type="Marker2D" parent="."]
+position = Vector2(2250, 640)

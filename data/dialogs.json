@@ -1,0 +1,114 @@
+{
+	"cassandra": {
+		"start": {
+			"speaker": "Cassandra, a Cartógrafa Cega",
+			"text": "Ouço o arrastar de suas botas no cascalho... A forma como você pisa revela o peso das asas que já teve. Aeterna não perdoa quem caminha às cegas — como eu.",
+			"next": "offer"
+		},
+		"offer": {
+			"text": "Desenhei o que meus ouvidos alcançaram. Leve meu mapa... se puder pagar o preço do conhecimento: 30 Pratas de Judas.",
+			"choices": [
+				{"text": "Comprar o Mapa de Aeterna (30 ◇)", "next": "thanks", "effects": ["buy_map"]},
+				{"text": "Agora não.", "next": "farewell"}
+			]
+		},
+		"thanks": {
+			"text": "Bom negócio, Portador da Luz. Aperte M e veja Aeterna como eu a ouço. As salas que você ainda não pisou aparecerão apenas como contornos... até que suas botas as contem.",
+			"next": "_END"
+		},
+		"farewell": {
+			"text": "Volte quando as Pratas cantarem nos seus bolsos. O Vazio não tem pressa.",
+			"next": "_END"
+		},
+		"sem_pratas": {
+			"text": "Hm... seus bolsos estão mais vazios que minhas órbitas. Caçe os Guardiões: as Pratas de Judas voam até você.",
+			"next": "_END"
+		}
+	},
+	"azazel": {
+		"start": {
+			"speaker": "Azazel, o Anjo Acorrentado",
+			"text": "Lúcifer... é você sob essa armadura desgraçada? Nós caímos do céu para este esgoto de ouro e ferrugem. Diga-me, meu senhor... o Pai ainda se lembra de nossos nomes, ou somos apenas cinzas sob os pés dos novos deuses?",
+			"choices": [
+				{"text": "[Dar Esperança] \"Enquanto eu empunhar esta lâmina, nossa história não será apagada.\"", "next": "esperanca", "effects": ["flag:azazel_met"]},
+				{"text": "[Aceitar a Realidade] \"Não há Pai aqui. Apenas nós e a nossa ruína.\"", "next": "ruina", "effects": ["flag:azazel_met"]}
+			]
+		},
+		"esperanca": {
+			"text": "Então ainda há um fogo que não é o do Vazio... Minhas pedras pesam mais a cada dia, meu senhor. Se um dia a dor for maior que a lembrança... prometa que não me deixará apodrecer aqui.",
+			"next": "_END"
+		},
+		"ruina": {
+			"text": "Ao menos você não mente. As pedras escutam tudo, sabia? Elas sonham com o dia em que me esquecerão.",
+			"next": "_END"
+		},
+		"mercy_offer": {
+			"text": "Chegou o dia, não foi? Eu sinto pela forma como você me olha... Liberte-me, meu senhor. Ou vá embora e me deixe afundar na insanidade.",
+			"choices": [
+				{"text": "[Misericórdia] Conceder o descanso final.", "next": "freed", "effects": ["flag:azazel_freed", "unlock_ach:azazel_quest"]},
+				{"text": "[Crueldade] Deixá-lo sucumbir à insanidade.", "next": "abandoned"}
+			]
+		},
+		"freed": {
+			"text": "Obrigado... irmão. Diga ao Pai... que Azazel caiu em pé.",
+			"next": "_END"
+		},
+		"after_freed": {
+			"text": "As pedras agora guardam apenas a marca de onde Azazel caiu em pé. A ruína aqui virou monumento.",
+			"next": "_END"
+		},
+		"abandoned": {
+			"text": "Então as pedras vencerão. Vá... e não olhe para trás, 'meu senhor'.",
+			"next": "_END"
+		}
+	},
+	"mormo": {
+		"start": {
+			"speaker": "Mormo, o Encantador de Relíquias",
+			"text": "Hehehe... um anjo de ferro negro na minha humilde barraca! Passei a vida encantando lixo dourado do Vazio, mas para VOCÊ tenho relíquias de verdade. Pratas de Judas na mão, amigo!",
+			"choices": [
+				{"text": "Sigilo da Lâmina Longa — alcance +35% (50 ◇)", "next": "start", "effects": ["buy_sigil:lamina_longa:50"]},
+				{"text": "Sigilo do Coração Extra — +1 de vida (40 ◇)", "next": "start", "effects": ["buy_sigil:coracao_extra:40"]},
+				{"text": "Sigilo da Chama Rápida — Chama +40% por golpe (45 ◇)", "next": "start", "effects": ["buy_sigil:chama_rapida:45"]},
+				{"text": "Sigilo de Azazel — alcance +25%, mas drena vida por golpe (60 ◇)", "next": "start", "effects": ["buy_sigil:azazel_blade:60"]},
+				{"text": "Selo da Serpente — o Dash corrói inimigos (55 ◇)", "next": "start", "effects": ["buy_sigil:selo_serpente:55"]},
+				{"text": "Marca de Mammon — +50% Pratas, mas dano dobrado em você (70 ◇)", "next": "start", "effects": ["buy_sigil:marca_mammon:70"]},
+				{"text": "Bênção Curativa — restaura 2 de vida (15 ◇)", "next": "start", "effects": ["buy_heal:15:2"]},
+				{"text": "Só estou olhando.", "next": "farewell"}
+			]
+		},
+		"farewell": {
+			"text": "Olhando também custa, sabia? ... Brincadeira, anjo. O Vazio é longo. Volte.",
+			"next": "_END"
+		},
+		"ja_tem": {
+			"text": "Hehe, esse você já tem! Não compro duplicatas de relíquias — nem de anjos.",
+			"next": "start"
+		},
+		"sem_pratas": {
+			"text": "Sem Pratas, sem relíquia, amigo. As regras do Vazio são claras: tudo tem preço.",
+			"next": "start"
+		}
+	},
+	"memoria_1": {
+		"start": {
+			"speaker": "Memória Fragmentada — A Queda",
+			"text": "...as trombetas de ferro rasgaram o sétimo céu. Um terço de nós caiu como chuva de estrelas mortas — mas você gritou alguma coisa antes do impacto. Algo sobre uma mentira. A lembrança se desfaz...",
+			"next": "_END"
+		}
+	},
+	"memoria_2": {
+		"start": {
+			"speaker": "Memória Fragmentada — A Negociação",
+			"text": "...ele estava lá, no início. O que sorri de ouro. Sussurrou aos arcanjos que permaneceram leais: 'deixem o Portador da Luz cair, e eu farei deste Vazio um reino'. Você nunca traiu o Céu, Lúcifer. Você foi... vendido.",
+			"next": "_END"
+		}
+	},
+	"memoria_3": {
+		"start": {
+			"speaker": "Memória Fragmentada — A Promessa",
+			"text": "...e se eu erguer o trono que não me pertence, me tornarei aquilo que me derrubou. Queime esta lembrança, Portador, ou seja escravo dela. O Vazio observa. O Vazio escolhe.",
+			"next": "_END"
+		}
+	}
+}

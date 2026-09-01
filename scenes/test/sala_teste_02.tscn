@@ -1,0 +1,168 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/room.gd" id="1_room"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/world/porta_passagem.tscn" id="3_porta"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/guardiao_caido.tscn" id="4_guardiao"]
+[ext_resource type="PackedScene" path="res://scenes/world/reliquia_habilidade.tscn" id="5_relic"]
+[ext_resource type="PackedScene" path="res://scenes/world/noz_energia.tscn" id="6_noz"]
+[ext_resource type="PackedScene" path="res://scenes/world/chao_rachado.tscn" id="7_chao"]
+[ext_resource type="PackedScene" path="res://scenes/world/tocha.tscn" id="8_tocha"]
+[ext_resource type="PackedScene" path="res://scenes/world/estatua_descanso.tscn" id="9_bench"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/npc_base.tscn" id="10_npc"]
+[ext_resource type="PackedScene" path="res://scenes/world/memoria.tscn" id="11_mem"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(1200, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(40, 800)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat"]
+size = Vector2(300, 32)
+
+[node name="SalaTeste02" type="Node2D"]
+script = ExtResource("1_room")
+room_id = "corredor_cinzas"
+room_name = "Corredor das Cinzas"
+grid_col = 2
+grid_row = 0
+grid_w = 1
+grid_h = 1
+connections = PackedStringArray("cripta_estrelas", "catedral_avareza")
+has_bench = true
+has_npc = true
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 1200.0
+offset_bottom = 1000.0
+color = Color(0.06, 0.05, 0.07, 1)
+
+[node name="Chao" type="StaticBody2D" parent="."]
+position = Vector2(600, 760)
+
+[node name="Visual" type="ColorRect" parent="Chao"]
+offset_left = -600.0
+offset_top = -40.0
+offset_right = 600.0
+offset_bottom = 40.0
+color = Color(0.12, 0.11, 0.14, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Chao"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="ParedeOeste" type="StaticBody2D" parent="."]
+position = Vector2(20, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParedeOeste"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="ParedeLeste" type="StaticBody2D" parent="."]
+position = Vector2(1180, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParedeLeste"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Plataforma" type="StaticBody2D" parent="."]
+position = Vector2(760, 560)
+
+[node name="Visual" type="ColorRect" parent="Plataforma"]
+offset_left = -150.0
+offset_top = -16.0
+offset_right = 150.0
+offset_bottom = 16.0
+color = Color(0.17, 0.16, 0.21, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plataforma"]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="PortaOeste" parent="." instance=ExtResource("3_porta")]
+position = Vector2(70, 640)
+target_scene = "res://scenes/test/arena_teste.tscn"
+target_spawn = "SpawnPortaLeste"
+
+[node name="Guardiao" parent="." instance=ExtResource("4_guardiao")]
+position = Vector2(850, 692)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(160, 600)
+
+[node name="SpawnPortaOeste" type="Marker2D" parent="."]
+position = Vector2(150, 640)
+
+[node name="PortaJardim" parent="." instance=ExtResource("3_porta")]
+position = Vector2(660, 640)
+target_scene = "res://scenes/biomas/jardim_adonai.tscn"
+target_spawn = "SpawnOeste"
+
+[node name="SpawnPortaJardim" type="Marker2D" parent="."]
+position = Vector2(715, 640)
+
+[node name="PortaLeste" parent="." instance=ExtResource("3_porta")]
+position = Vector2(1140, 640)
+target_scene = "res://scenes/bosses/arena_mammon.tscn"
+target_spawn = "SpawnEntrada"
+
+[node name="SpawnPortaLeste" type="Marker2D" parent="."]
+position = Vector2(1080, 640)
+
+[node name="ReliquiaWallJump" parent="." instance=ExtResource("5_relic")]
+position = Vector2(320, 640)
+ability_id = "wall_jump"
+ability_name = "Garra do Abismo"
+
+[node name="ReliquiaDoubleJump" parent="." instance=ExtResource("5_relic")]
+position = Vector2(420, 640)
+ability_id = "double_jump"
+ability_name = "Asas Caídas"
+
+[node name="ReliquiaGroundPound" parent="." instance=ExtResource("5_relic")]
+position = Vector2(520, 640)
+ability_id = "ground_pound"
+ability_name = "Macho de Ferro"
+
+[node name="ReliquiaHook" parent="." instance=ExtResource("5_relic")]
+position = Vector2(620, 640)
+ability_id = "hook"
+ability_name = "Sombra de Voo"
+
+[node name="Noz1" parent="." instance=ExtResource("6_noz")]
+position = Vector2(450, 330)
+
+[node name="Noz2" parent="." instance=ExtResource("6_noz")]
+position = Vector2(700, 240)
+
+[node name="Noz3" parent="." instance=ExtResource("6_noz")]
+position = Vector2(950, 330)
+
+[node name="ChaoRachado1" parent="." instance=ExtResource("7_chao")]
+position = Vector2(940, 708)
+
+[node name="ChaoRachado2" parent="." instance=ExtResource("7_chao")]
+position = Vector2(1000, 708)
+
+[node name="Tocha1" parent="." instance=ExtResource("8_tocha")]
+position = Vector2(220, 660)
+
+[node name="Tocha2" parent="." instance=ExtResource("8_tocha")]
+position = Vector2(800, 660)
+
+[node name="EstatuaDescanso" parent="." instance=ExtResource("9_bench")]
+position = Vector2(90, 720)
+
+[node name="Cassandra" parent="." instance=ExtResource("10_npc")]
+position = Vector2(780, 720)
+dialogue_id = "cassandra"
+
+[node name="Azazel" parent="." instance=ExtResource("10_npc")]
+position = Vector2(240, 720)
+dialogue_id = "azazel"
+start_nodes_by_flag = {
+"azazel_freed": "after_freed",
+"azazel_met": "mercy_offer"
+}
+
+[node name="MemoriaNegociacao" parent="." instance=ExtResource("11_mem")]
+position = Vector2(1150, 560)
+memoria_id = "2"

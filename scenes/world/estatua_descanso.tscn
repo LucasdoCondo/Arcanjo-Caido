@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/ponto_descanso.gd" id="1_script"]
+
+[sub_resource type="Gradient" id="Gradient_bench"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.6, 0.9, 1, 0.7, 0.6, 0.85, 1, 0.3, 0.6, 0.85, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_bench"]
+gradient = SubResource("Gradient_bench")
+width = 192
+height = 192
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
+size = Vector2(90, 90)
+
+[node name="PontoDescanso" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="Pedestal" type="ColorRect" parent="."]
+offset_left = -22.0
+offset_top = -20.0
+offset_right = 22.0
+offset_bottom = 0.0
+color = Color(0.24, 0.23, 0.28, 1)
+
+[node name="Estatua" type="ColorRect" parent="."]
+offset_left = -12.0
+offset_top = -64.0
+offset_right = 12.0
+offset_bottom = -18.0
+color = Color(0.35, 0.34, 0.4, 1)
+
+[node name="Asas" type="ColorRect" parent="."]
+offset_left = -26.0
+offset_top = -58.0
+offset_right = -12.0
+offset_bottom = -30.0
+color = Color(0.3, 0.29, 0.35, 1)
+
+[node name="Asas2" type="ColorRect" parent="."]
+offset_left = 12.0
+offset_top = -58.0
+offset_right = 26.0
+offset_bottom = -30.0
+color = Color(0.3, 0.29, 0.35, 1)
+
+[node name="Glow" type="ColorRect" parent="."]
+offset_left = -18.0
+offset_top = -80.0
+offset_right = 18.0
+offset_bottom = -8.0
+color = Color(0.83, 0.69, 0.22, 0.25)
+
+[node name="Light" type="PointLight2D" parent="."]
+position = Vector2(0, -40)
+color = Color(0.7, 0.85, 1, 1)
+energy = 1.0
+texture = SubResource("GradientTexture2D_bench")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -40)
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="RespawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 4)

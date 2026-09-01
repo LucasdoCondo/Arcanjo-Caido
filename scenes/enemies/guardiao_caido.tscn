@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/guardiao_caido.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/prata_judas.tscn" id="2_coin"]
+[ext_resource type="Texture2D" path="res://assets/art/guardiao_sheet.svg" id="3_tex"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(36, 52)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(40, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(46, 44)
+
+[node name="GuardiaoCaido" type="CharacterBody2D" groups=["enemies"]]
+loot_scene = ExtResource("2_coin")
+loot_amount = 4
+script = ExtResource("1_script")
+
+[node name="Visual" type="Sprite2D" parent="."]
+scale = Vector2(0.62, 0.62)
+texture = ExtResource("3_tex")
+hframes = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Hurtbox" type="Area2D" parent="." groups=["hurtbox"]]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="AttackArea" type="Area2D" parent="."]
+position = Vector2(34, 0)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+shape = SubResource("RectangleShape2D_attack")

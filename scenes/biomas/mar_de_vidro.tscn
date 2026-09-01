@@ -1,0 +1,121 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/room.gd" id="1_room"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/world/porta_passagem.tscn" id="3_porta"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/guardiao_caido.tscn" id="4_guardiao"]
+[ext_resource type="PackedScene" path="res://scenes/test/espinhos_teste.tscn" id="5_spike"]
+[ext_resource type="PackedScene" path="res://scenes/world/tocha.tscn" id="6_tocha"]
+[ext_resource type="PackedScene" path="res://scenes/world/memoria.tscn" id="7_mem"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(1600, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(40, 800)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat"]
+size = Vector2(280, 32)
+
+[node name="MarDeVidro" type="Node2D"]
+script = ExtResource("1_room")
+room_id = "mar_de_vidro"
+room_name = "Mar de Vidro"
+grid_col = 2
+grid_row = 2
+grid_w = 1
+grid_h = 1
+connections = PackedStringArray("jardim_adonai")
+ambient_color = Color(0.4, 0.52, 0.68, 1)
+adjust_saturation = 0.95
+vignette_intensity = 0.5
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 1600.0
+offset_bottom = 1000.0
+color = Color(0.05, 0.07, 0.1, 1)
+
+[node name="Chao" type="StaticBody2D" parent="."]
+position = Vector2(800, 760)
+
+[node name="Visual" type="ColorRect" parent="Chao"]
+offset_left = -800.0
+offset_top = -40.0
+offset_right = 800.0
+offset_bottom = 40.0
+color = Color(0.16, 0.22, 0.3, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Chao"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="ParedeOeste" type="StaticBody2D" parent="."]
+position = Vector2(20, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParedeOeste"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="ParedeLeste" type="StaticBody2D" parent="."]
+position = Vector2(1580, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParedeLeste"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Plataforma1" type="StaticBody2D" parent="."]
+position = Vector2(600, 560)
+
+[node name="Visual" type="ColorRect" parent="Plataforma1"]
+offset_left = -140.0
+offset_top = -16.0
+offset_right = 140.0
+offset_bottom = 16.0
+color = Color(0.2, 0.28, 0.38, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plataforma1"]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="Plataforma2" type="StaticBody2D" parent="."]
+position = Vector2(1100, 480)
+
+[node name="Visual" type="ColorRect" parent="Plataforma2"]
+offset_left = -140.0
+offset_top = -16.0
+offset_right = 140.0
+offset_bottom = 16.0
+color = Color(0.2, 0.28, 0.38, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Plataforma2"]
+shape = SubResource("RectangleShape2D_plat")
+
+[node name="PortaOeste" parent="." instance=ExtResource("3_porta")]
+position = Vector2(70, 640)
+target_scene = "res://scenes/biomas/jardim_adonai.tscn"
+target_spawn = "SpawnLeste"
+
+[node name="Espinhos1" parent="." instance=ExtResource("5_spike")]
+position = Vector2(950, 706)
+
+[node name="Espinhos2" parent="." instance=ExtResource("5_spike")]
+position = Vector2(1250, 706)
+
+[node name="Guardiao1" parent="." instance=ExtResource("4_guardiao")]
+position = Vector2(600, 692)
+
+[node name="Guardiao2" parent="." instance=ExtResource("4_guardiao")]
+position = Vector2(1400, 692)
+
+[node name="Tocha1" parent="." instance=ExtResource("6_tocha")]
+position = Vector2(350, 660)
+
+[node name="Tocha2" parent="." instance=ExtResource("6_tocha")]
+position = Vector2(1450, 660)
+
+[node name="MemoriaPromessa" parent="." instance=ExtResource("7_mem")]
+position = Vector2(1100, 420)
+memoria_id = "3"
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(160, 600)
+
+[node name="SpawnOeste" type="Marker2D" parent="."]
+position = Vector2(150, 640)

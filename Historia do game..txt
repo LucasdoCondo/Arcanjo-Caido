@@ -1,0 +1,77 @@
+Aqui está a estrutura de universo, enredo principal, zonas e mecânicas de NPCs para o seu jogo.
+
+Premissa Geral & Universo
+
+Após a Terceira Guerra Celestial, Lúcifer e sua legião não caíram em um abismo de fogo, mas em Aeterna, o Vazio Primordial. A força do impacto estilhaçou o tecido da realidade, arrastando pedaços da Terra histórica, artefatos profanos e ruínas de antigas civilizações para o mesmo lugar.
+
+Lúcifer acorda sem suas asas radiantes, trajando apenas uma armadura de ferro negro carcomida e portando a Lâmina do Alvorecer quebrada. Sua legião de um terço dos anjos foi dispersa e deformada pelas energias do Vazio, transformando-se em criaturas monstruosas ou perdendo a razão.
+
+O objetivo de Lúcifer é cruzar as seis regiões de Aeterna, derrotar os Antigos Príncipes que tomaram os fragmentos de sua antiga autoridade e reunir forças para confrontar o regente usurpador do Vazio.
+
+Progressão da História Principal
+
+Ato I: A Queda e o Despertar (0–20h)
+
+Lúcifer desperta na Cripta das Estrelas Caídas. Ele descobre que o Vazio está se espalhando e apagando a existência. Para avançar, precisa reativar os portões arcanos restaurando sua essência vital através das almas dos caídos.
+
+Ato II: Os Príncipes Desgovernan (20–55h)
+
+A busca pelos três Grandes Selos de Acesso. Lúcifer viaja por biomas dominados por entidades da mitologia bíblica e pagã que escravizaram os anjos caídos sobreviventes.
+
+Ato III: A Revelação da Mentira (55–75h)
+
+Ao coletar as memórias dos anjos caídos, Lúcifer descobre que a Queda foi orquestrada por Mammon (o Príncipe da Ganância), que negociou com forças além da criação para absorver a luz dos anjos e se tornar o novo Deus deste reino.
+
+Ato IV: O Trono do Abismo (75–80h+)
+
+A investida final na Catedral da Avareza, enfrentando as forças de Belzebutu antes do confronto supremo contra Mammon.
+
+Chefe Final & Principais Bosses
+
+Boss Final: Mammon, o Ingestionável (Chefe Final)
+
+A personificação da ganância de Aeterna. Ele combate fundido a um trono colossal de ouro derretido e ossos angélicos, utilizando ataques baseados em peso, riqueza profana e sucção de essência.
+
+Penúltimo Boss: Belzebuth, o Senhor da Pestilência
+
+O antigo general da Guarda de Lúcifer, agora corrompido em uma abominação insetóide cavernosa. Ele guarda os portões da Catedral da Avareza em uma luta frenética de duas fases (terrestre e aérea).
+
+Bosses Secundários (Mitológicos e Bíblicos):
+
+Leviatã: Monstro marinho que guarda o lago de mercúrio no bioma das profundezas.
+
+Lilith, a Primeira Exilada: Mestra de ilusões e magia de sangue, testando a determinação de Lúcifer.
+
+Cérbero de Bronze: Guardião mitológico grego reprogramado com tecnologia arcaica por Mammon.
+
+NPCs, Lojas e Quests Secundárias (Estilo Hollow Knight)
+
+Para garantir dezenas de horas de conteúdo opcional e imersão:
+
+O Encantador de Relíquias (Mórmon):
+
+Um gnomo/demônio ferreiro que vende Charms (Talismãs de Essência) em troca de Pratas de Judas (moeda do jogo).
+
+Quest: Encontrar 12 fragmentos de metal sagrado no mapa para forjar melhorias para a lâmina de Lúcifer.
+
+A Cartógrafa Cega (Cassandra):
+
+Baseada na profetisa grega. Ela está espalhada pelos cantos mais obscuros dos mapas. Lúcifer compra os mapas inacabados dela e precisa usar a habilidade de pena-guia para desenhar os caminhos ao explorar.
+
+NPC Tragico (Azazel, o Anjo Acorrentado):
+
+Um ex-companheiro de exército que está preso em rochas vivas. A cada encontro, ele pede a Lúcifer que traga memórias de companheiros mortos. No final da quest, cabe ao jogador decidir se concede a ele a morte misericordiosa ou se o deixa sucumbir à insanidade.
+
+Mercador Itinerante (Charon):
+
+Navega pelos rios do mapa vendendo itens consumíveis, mapas de segredos e chaves de portões esquecidos.
+
+Estrutura de Exploração e Rejogabilidade
+
+Mecânica de "Luz Residual": Habilidades de movimentação (como o Dash de Sombra ou o Voo de Asas Queimadas) são desbloqueadas ao derrotar chefes mitológicos específicos, permitindo reexplorar áreas antigas (backtracking) para acessar passagens secretas.
+
+Finais Múltiplos:
+
+Final Padrão: Derrotar Mammon e reivindicar o trono do Vazio.
+
+Final Verdadeiro (requer 100% de exploração e quests de NPCs completas): Lúcifer recusa o trono, destrói o tecido de Aeterna e liberta todas as almas presas no Limbo.
