@@ -75,7 +75,42 @@ dist/
 
 ---
 
-## 4. Distribuição
+## 4. Instalador Windows (Inno Setup)
+
+Para distribuir um instalador (`Setup_ARCANJO_CAIDO_v1.0.0.exe`) em vez do `.zip`:
+
+1. **Instale o Inno Setup 6** (gratuito): https://jrsoftware.org/isinfo.php
+2. **Exporte o preset "Windows Instalador"** (`export_presets.cfg` → `[preset.1]`),
+   que gera `C:\Lucifer_Game_Build\Lucifer.exe` + `Lucifer.pck` (PCK separado).
+   Automático (também compila o instalador se o Inno Setup já estiver instalado):
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File build_instalador.ps1
+   ```
+   Ou manual:
+   ```powershell
+   godot --headless --path . --export-release "Windows Instalador" C:/Lucifer_Game_Build/Lucifer.exe
+   ```
+3. **Compile o instalador** — o script já vem pronto e comentado no projeto
+   (`setup_lucifer.iss`): abra-o no Inno Setup Compiler e tecle **Ctrl+F9**
+   (Build → Compile), ou via linha de comando:
+   ```powershell
+   & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" setup_lucifer.iss
+   ```
+4. O instalador final é salvo em `C:\Lucifer_Game_Installer\Setup_ARCANJO_CAIDO_v1.0.0.exe`.
+
+O que o instalador faz: instala em `C:\Program Files\ARCANJO CAIDO`, cria atalho
+no Menu Iniciar (+ desinstalador), atalho opcional na Área de Trabalho (desmarcado
+por padrão), wizard em português e opção de executar o jogo ao concluir. O
+desinstalador **não apaga** os saves/conquistas (ficam em `user://` → AppData).
+
+### Teste final do instalador
+- [ ] Instalar em uma pasta/máquina **diferente** e jogar a partir do atalho
+- [ ] Verificar criação em `C:\Program Files\ARCANJO CAIDO` e atalhos
+- [ ] Desinstalar e confirmar que a pasta é removida (saves em AppData permanecem)
+
+---
+
+## 5. Distribuição
 
 ### Itch.io (via butler)
 ```powershell

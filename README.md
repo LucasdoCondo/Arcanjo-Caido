@@ -109,8 +109,8 @@ Veja `docs/BALANCEAMENTO.md` para a tabela completa de valores ajustáveis
 - **Normal maps**: pipeline pronto via `FxUtil.apply_flat_normal()` — troque a
   textura neutra por normal maps reais gerados no Aseprite/Krita quando a arte
   final chegar
-- **Vinheta e névoa**: shaders em `shaders/vignette.gdshader` e
-  `shaders/fog.gdshader` (névoa de duas camadas em movimento lento)
+- **Vinheta e névoa**: shaders em `assets/shaders/vignette.gdshader` e
+  `assets/shaders/fog.gdshader` (névoa de duas camadas em movimento lento)
 
 ## 📖 Lore
 

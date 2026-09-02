@@ -20,9 +20,9 @@
 #     pronto e nao compila DLLs — o .exe ja traz tudo que o jogo precisa.
 # ============================================================================
 
-param(
+	param(
 	[string]$GodotPath = "",
-	[string]$Version = "1.0.0"
+	[string]$Version = "1.0.0-beta-final"
 )
 
 $ErrorActionPreference = "Stop"

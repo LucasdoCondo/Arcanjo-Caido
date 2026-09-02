@@ -1,17 +1,46 @@
 ; Engine configuration file.
-; ARCANJO CAIDO - Metroidvania 2D estilo Hollow Knight
-; Projeto: Godot 4.x | Passo 1: Controller do Lúcifer
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
-config/name="ARCANJO CAIDO"
+config/name="Arcanjos Caídos Beta Final"
 config/description="Metroidvania offline protagonizado por Lúcifer no Limbo Cósmico de Aeterna."
-config/version="1.0.0"
+config/version="1.0.0-beta-final"
 run/main_scene="res://scenes/ui/menu_principal.tscn"
-config/features=PackedStringArray("4.2", "2D")
+config/features=PackedStringArray("4.7")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GameLogger="*res://scripts/core/game_logger.gd"
+GameState="*res://scripts/core/game_state.gd"
+SceneTransition="*res://scripts/core/scene_transition.gd"
+MapOverlay="*res://scripts/ui/map_overlay.gd"
+AudioManager="*res://scripts/core/audio_manager.gd"
+CombatManager="*res://scripts/core/combat_manager.gd"
+Achievements="*res://scripts/core/achievements.gd"
+SaveManager="*res://scripts/core/save_manager.gd"
+HUD="*res://scripts/ui/hud.gd"
+PauseMenu="*res://scripts/ui/pause_menu.gd"
+DisplayManager="*res://scripts/core/display_manager.gd"
+InputRemap="*res://scripts/core/input_remap.gd"
+Culling="*res://scripts/core/culling_manager.gd"
+DialogueUI="*res://scripts/ui/dialogue_ui.gd"
+
+[debug]
+
+file_logging/enable_file_logging_pc=true
 
 [display]
 
@@ -20,10 +49,6 @@ window/size/viewport_height=1080
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
-; Passo 24: VSync ligado por padrao (0=desligado, 1=sempre, 2=adaptativo).
-; O DisplayManager (Passo 21) permite alternar no menu de Opcoes.
-window/vsync/vsync_mode=1
 
 [input]
 
@@ -101,45 +126,14 @@ parry={
 ]
 }
 
-[autoload]
-
-;; Passo 25: GameLogger é o PRIMEIRO autoload — precisa estar ativo antes de
-;; todos os outros para capturar qualquer erro desde o boot e detectar um
-;; crash da sessão anterior antes que qualquer cena carregue.
-GameLogger="*res://scripts/core/game_logger.gd"
-GameState="*res://scripts/core/game_state.gd"
-SceneTransition="*res://scripts/core/scene_transition.gd"
-MapOverlay="*res://scripts/ui/map_overlay.gd"
-AudioManager="*res://scripts/core/audio_manager.gd"
-CombatManager="*res://scripts/core/combat_manager.gd"
-Achievements="*res://scripts/core/achievements.gd"
-SaveManager="*res://scripts/core/save_manager.gd"
-HUD="*res://scripts/ui/hud.gd"
-PauseMenu="*res://scripts/ui/pause_menu.gd"
-DisplayManager="*res://scripts/core/display_manager.gd"
-InputRemap="*res://scripts/core/input_remap.gd"
-Culling="*res://scripts/core/culling_manager.gd"
-DialogueUI="*res://scripts/ui/dialogue_ui.gd"
-;; Passo 24: o DevMenu NÃO é mais autoload — é carregado em runtime apenas em
-;; builds de debug (bootstrap no main_menu.gd). Assim o export com o filtro
-;; "scripts/debug/*" remove o código de QA do pacote final por completo,
-;; sem erros de autoload no lançamento.
-
 [physics]
 
 2d/default_gravity=980
 common/physics_interpolation=true
 
-[debug]
-
-;; Passo 25: log nativo da engine — todos os erros/warnings de script (com
-;; stack trace completo) são gravados em user://logs/godot.log (rotativo),
-;; complementando o game_session.log estruturado do autoload GameLogger.
-file_logging/enable_file_logging_pc=true
-
 [rendering]
 
 renderer/rendering_method="mobile"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.05, 0.05, 0.07, 1)
 viewport/hdr_2d=true
+environment/defaults/default_clear_color=Color(0.05, 0.05, 0.07, 1)

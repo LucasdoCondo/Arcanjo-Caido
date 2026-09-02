@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/reflective_surface.gd" id="1_s"]
-[ext_resource type="Shader" path="res://shaders/mirror_water.gdshader" id="2_sh"]
+[ext_resource type="Shader" path="res://assets/shaders/mirror_water.gdshader" id="2_sh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mirror"]
 shader = ExtResource("2_sh")

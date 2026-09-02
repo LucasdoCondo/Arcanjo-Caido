@@ -14,7 +14,7 @@ extends ColorRect
 func _ready() -> void:
 	if shader_material == null:
 		var em := ShaderMaterial.new()
-		em.shader = load("res://shaders/mirror_water.gdshader")
+		em.shader = load("res://assets/shaders/mirror_water.gdshader")
 		shader_material = em
 	material = shader_material
 

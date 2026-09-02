@@ -246,7 +246,7 @@ func _create_vignette() -> void:
 	var rect := ColorRect.new()
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var mat := ShaderMaterial.new()
-	mat.shader = load("res://shaders/vignette.gdshader")
+	mat.shader = load("res://assets/shaders/vignette.gdshader")
 	mat.set_shader_parameter("intensity", vignette_intensity)
 	rect.material = mat
 	layer.add_child(rect)
@@ -263,7 +263,7 @@ func _create_fog() -> void:
 	var rect := ColorRect.new()
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var mat := ShaderMaterial.new()
-	mat.shader = load("res://shaders/fog.gdshader")
+	mat.shader = load("res://assets/shaders/fog.gdshader")
 	rect.material = mat
 	layer.add_child(rect)
 	rect.set_anchors_preset(Control.PRESET_FULL_RECT)

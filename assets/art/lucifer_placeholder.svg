@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="128" viewBox="0 0 64 128">
-  <!-- Placeholder do Lúcifer: silhueta de armadura de ferro negro com olhos em brasa -->
-  <rect width="64" height="128" fill="#00000000"/>
-  <path d="M8 6 L20 18" stroke="#666677" stroke-width="3" stroke-linecap="round"/>
-  <path d="M56 6 L44 18" stroke="#666677" stroke-width="3" stroke-linecap="round"/>
-  <path d="M32 4 L44 14 L44 30 L52 40 L52 68 L40 68 L40 124 L24 124 L24 68 L12 68 L12 40 L20 30 L20 14 Z" fill="#1a1a22" stroke="#4a4a5a" stroke-width="2"/>
-  <circle cx="26" cy="22" r="2.5" fill="#ff5533"/>
-  <circle cx="38" cy="22" r="2.5" fill="#ff5533"/>
-</svg>
