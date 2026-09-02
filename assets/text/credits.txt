@@ -1,0 +1,32 @@
+# ARCANJO CAIDO — CRÉDITOS
+# (Arquivo configurável: linhas com "#" são seções; linhas vazias separam.)
+
+# UM JOGO DE
+
+Equipe Arcanjo Caído
+
+# DIREÇÃO E GAME DESIGN
+
+Lucas do Condo
+
+# PROGRAMAÇÃO E TECH ART
+
+Feito com Godot Engine 4
+
+# ARTE E ATMOSFERA
+
+Aeterna nasce da queda de um anjo.
+
+# SOM E TRILHA SONORA
+
+Sintetizada em tempo real pelo AudioManager
+
+# AGRADECIMENTOS ESPECIAIS
+
+A todos que caíram junto com Lúcifer
+e ajudaram a reacender a sua chama.
+
+# FERRAMENTAS
+
+Godot Engine — MIT License
+GDScript, Light2D, CPUParticles e o Vazio.

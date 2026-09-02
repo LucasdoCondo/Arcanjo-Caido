@@ -113,6 +113,49 @@ func respawn_player() -> void:
 	SceneTransition.change_room(respawn_scene_path, "", respawn_position)
 
 
+# ===========================================================================
+# PASSO 22: TEMPO DE JOGO, CONCLUSÃO DO MAPA E FINAIS
+# ===========================================================================
+## Tempo total de jogo acumulado (segundos). Exibido no seletor de Save Slots
+## como "H:MM". Persistido junto de cada slot.
+var playtime_seconds: float = 0.0
+
+## Final pendente a ser exibido pela tela de Créditos ("padrao"/"verdadeiro").
+var pending_ending: String = ""
+
+
+func _process(delta: float) -> void:
+	playtime_seconds += delta
+
+
+## Percentual de conclusão do mapa (0..100): salas visitadas / salas conhecidas.
+## Usado no seletor de Save Slots do Menu Principal.
+func map_completion_percent() -> int:
+	if rooms.is_empty():
+		return 0
+	return int(round(float(visited.size()) / float(rooms.size()) * 100.0))
+
+
+## Formata o tempo de jogo como "H:MM" (ex: "3:07" = 3 horas e 7 minutos).
+static func format_playtime(seconds: float) -> String:
+	var total_min := int(seconds) / 60
+	return "%d:%02d" % [total_min / 60, total_min % 60]
+
+
+## Passo 22: aciona um final do jogo e leva o jogador à tela de Créditos.
+##   "padrao"    — derrotar Mammon (Soberano do Vazio)
+##   "verdadeiro" — recusar o trono, destruir Aeterna (A Verdadeira Libertação)
+## A tela de créditos lê pending_ending para escolher o texto do epílogo.
+func request_ending(ending_id: String) -> void:
+	pending_ending = ending_id
+	match ending_id:
+		"verdadeiro":
+			Achievements.unlock("true_freedom")
+		_:
+			Achievements.unlock("mammon_slain")
+	SceneTransition.change_room("res://scenes/ui/credits_screen.tscn", "")
+
+
 # ---------------------------------------------------------------------------
 # JOGADOR
 # ---------------------------------------------------------------------------
@@ -139,6 +182,8 @@ func restore_defaults() -> void:
 	sigils_equipped = []
 	has_respawn = false
 	respawn_scene_path = ""
+	playtime_seconds = 0.0
+	pending_ending = ""
 
 
 # ---------------------------------------------------------------------------

@@ -867,6 +867,8 @@ func _cancel_heal() -> void:
 # DANO — Hurtbox do Lúcifer (chamado por inimigos e superfícies de perigo)
 # ===========================================================================
 func take_damage(amount: int, source_position: Vector2 = Vector2(1e9, 1e9)) -> void:
+	if god_mode:
+		return  ## Passo 23: Dev Menu — God Mode (flag setada apenas pelo DevMenu)
 	if is_invulnerable or _iframes_timer > 0.0:
 		return
 
@@ -948,6 +950,10 @@ func apply_sigils() -> void:
 # ECONOMIA — Pratas de Judas (Passo 3)
 # ===========================================================================
 var pratas_de_judas: int = 0  ## Bolsa do Lúcifer (moeda de Aeterna)
+
+## Passo 23: God Mode — o DevMenu liga/desliga. O jogo em si NUNCA seta esta
+## flag; no build de lançamento o DevMenu nem existe, então fica false.
+var god_mode: bool = false
 
 
 ## Chamado pela PrataDeJudas ao ser coletada.

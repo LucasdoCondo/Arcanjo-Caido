@@ -289,6 +289,13 @@ func _die() -> void:
 	_bar.hide_fight()
 	boss_died.emit()
 	Achievements.unlock("mammon_slain")
+	## Passo 22: registra a condição do Final Padrão e leva aos Créditos
+	## após a chuva de Pratas (tempo de ver o loot e a queda da Avareza).
+	## O FINAL VERDADEIRO (recusar o trono) é acionado por uma escolha de
+	## diálogo/quest futura chamando: GameState.request_ending("verdadeiro")
+	GameState.flags["mammon_defeated"] = true
+	get_tree().create_timer(6.0).timeout.connect(
+			func(): GameState.request_ending("padrao"))
 	## Volta para a trilha da região após a queda da Avareza.
 	AudioManager.play_music("catedral_avareza")
 	## A avareza se desfaz: chuva de Pratas de Judas.

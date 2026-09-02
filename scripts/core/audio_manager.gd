@@ -72,6 +72,26 @@ func _ready() -> void:
 	_setup_pitch_variation()
 
 
+func _exit_tree() -> void:
+	## Limpeza no quit: para todos os players para que nenhum
+	## AudioStreamPlayback fique referenciado após a saída (evita o warning
+	## "ObjectDB instances were leaked at exit" em encerramentos forçados).
+	## AudioServer.lock()/unlock() força sincronia com a thread de mix,
+	## garantindo que o playback seja desregistrado antes do shutdown.
+	AudioServer.lock()
+	for p: AudioStreamPlayer in [_bgm_a, _bgm_b, _ambience_player]:
+		if p != null:
+			p.stop()
+			p.stream = null
+	for p in _sfx_players:
+		if p != null:
+			p.stop()
+			p.stream = null
+	AudioServer.unlock()
+	_sounds.clear()
+	_tracks.clear()
+
+
 # ---------------------------------------------------------------------------
 # BUSES
 # ---------------------------------------------------------------------------

@@ -57,6 +57,7 @@ func save_slot(slot: int) -> bool:
 		"respawn_x": GameState.respawn_position.x,
 		"respawn_y": GameState.respawn_position.y,
 		"has_respawn": GameState.has_respawn,
+		"playtime": GameState.playtime_seconds,  ## Passo 22: tempo total de jogo
 	}
 	var f := FileAccess.open(slot_path(slot), FileAccess.WRITE)
 	if f == null:
@@ -90,6 +91,7 @@ func load_slot(slot: int) -> bool:
 	GameState.respawn_scene_path = info.get("respawn_room", "")
 	GameState.respawn_position = Vector2(info.get("respawn_x", 0.0),
 			info.get("respawn_y", 0.0))
+	GameState.playtime_seconds = float(info.get("playtime", 0.0))  ## Passo 22
 
 	var current: String = info.get("current_room", "")
 	if current != "" and GameState.rooms.has(current):

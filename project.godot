@@ -112,6 +112,10 @@ DisplayManager="*res://scripts/core/display_manager.gd"
 InputRemap="*res://scripts/core/input_remap.gd"
 Culling="*res://scripts/core/culling_manager.gd"
 DialogueUI="*res://scripts/ui/dialogue_ui.gd"
+;; Passo 23: DevMenu é ferramenta de QA — autodestrói-se fora de builds de
+;; debug (OS.is_debug_build) e deve ser excluído do export via filtro
+;; "scripts/debug/*" no export_presets.cfg.
+DevMenu="*res://scripts/debug/dev_menu.gd"
 
 [physics]
 
