@@ -43,10 +43,14 @@ const ALL_SIGILS := ["lamina_longa", "coracao_extra", "chama_rapida",
 const COL_TITLE := Color(0.95, 0.5, 0.25)
 const COL_TEXT := Color(0.85, 0.9, 0.85)
 
+## Passo 26: suíte de stress/profiling (mesmo isolamento "scripts/debug/*").
+const StressTestScript := preload("res://scripts/debug/stress_test.gd")
+
 var _panel: PanelContainer
 var _god_label: Button
 var _perf_label: Label      ## Overlay discreto de desempenho (canto)
 var _perf_visible: bool = true
+var _stress                 ## Instância do StressTest (Passo 26)
 
 
 func _ready() -> void:
@@ -59,6 +63,9 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS  ## Funciona com o jogo pausado
 	_build_perf_overlay()
 	_build_panel()
+	_stress = StressTestScript.new()
+	_stress.name = "StressTest"
+	add_child(_stress)
 
 
 # ---------------------------------------------------------------------------
@@ -124,6 +131,14 @@ func _build_panel() -> void:
 		_add_row_button(vbox, "Toggle Sigilo: %s" % id,
 				func(): _toggle_sigil(captured))
 
+	_title_label(vbox, "TESTES DE ESTRESSE (PASSO 26)")
+	_add_row_button(vbox, "Stress: 100 Pratas + 20 Inimigos (F6)",
+			func(): _stress.spawn_stress())
+	_add_row_button(vbox, "Limpar Stress e Validar queue_free (F7)",
+			func(): _stress.clear_stress())
+	_add_row_button(vbox, "Relatório de Memória RAM/VRAM (F8)",
+			func(): _stress.memory_report())
+
 	_title_label(vbox, "OUTROS")
 	_add_row_button(vbox, "Overlay de desempenho: LIGADO",
 			func(): _toggle_perf_overlay())
@@ -160,6 +175,12 @@ func _unhandled_input(event: InputEvent) -> void:
 				_add_pratas()
 			KEY_F4:
 				_fill_chama()
+			KEY_F6:
+				_stress.spawn_stress()
+			KEY_F7:
+				_stress.clear_stress()
+			KEY_F8:
+				_stress.memory_report()
 	elif event is InputEventKey and event.pressed and event.keycode == KEY_QUOTELEFT:
 		_toggle_panel()  ## Tecla ~ alternativa
 

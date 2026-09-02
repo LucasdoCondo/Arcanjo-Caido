@@ -103,6 +103,10 @@ parry={
 
 [autoload]
 
+;; Passo 25: GameLogger é o PRIMEIRO autoload — precisa estar ativo antes de
+;; todos os outros para capturar qualquer erro desde o boot e detectar um
+;; crash da sessão anterior antes que qualquer cena carregue.
+GameLogger="*res://scripts/core/game_logger.gd"
 GameState="*res://scripts/core/game_state.gd"
 SceneTransition="*res://scripts/core/scene_transition.gd"
 MapOverlay="*res://scripts/ui/map_overlay.gd"
@@ -125,6 +129,13 @@ DialogueUI="*res://scripts/ui/dialogue_ui.gd"
 
 2d/default_gravity=980
 common/physics_interpolation=true
+
+[debug]
+
+;; Passo 25: log nativo da engine — todos os erros/warnings de script (com
+;; stack trace completo) são gravados em user://logs/godot.log (rotativo),
+;; complementando o game_session.log estruturado do autoload GameLogger.
+file_logging/enable_file_logging_pc=true
 
 [rendering]
 

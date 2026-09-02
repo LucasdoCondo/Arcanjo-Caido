@@ -67,6 +67,8 @@ ARCANJO CAIDO/
 - [x] **Passo 16** — Animação Fluida: Squash & Stretch (estica ao pular/esticado no dash, achata ao aterrissar/ground pound), Rotational Lean (inclina ao acelerar/frear/mudar de direção), interpolação de movimento (physics interpolation + visuais por frame no `_process` para 120/144Hz+), Coyote Time e Jump Buffer
 - [x] **Passo 17** — Física Secundária: capa carcomida de Lúcifer (simulação de juntas que responde ao vento/gravidade/velocidade), rastro fantasma (afterimages semi-transparentes com fade-out no dash), partículas de cenário (poeira dos pés ao correr/pular/aterrissar, faíscas no contato da lâmina, gotas de sangue negro que caen/grudan nas plataformas)
 - [x] **Passo 18** — Vegetação e Cenários Reativos: plantas/cadenas/mantas que se mecen ao passar Lúcifer ou inimigos, elementos destruibles (vasos/caixas/estátuas que se quebram em pedazos com física de gravidade), reflexos em superfícies (shader mirror_water para rios de mercúrio/chão polido que reflete o sprite e as luces)
+- [x] **Passo 25** — GameLogger: crash dump local (log estruturado com timestamp/versão/cena/ação do jogador em `user://game_session.log`), log nativo da engine (`user://logs/godot.log`), interceptação de crash súbito (`NOTIFICATION_CRASH`) e aviso amigável na inicialização se a sessão anterior terminou em crash crítico
+- [x] **Passo 26** — Suíte de Stress & Profiling (DevMenu F6/F7/F8): detector de vazamento de RAM/VRAM por transição de sala (alerta após 10 trocas consecutivas subindo), instanciação massiva de 100 Pratas de Judas + 20 Guardiões com medição de queda de FPS e validação da limpeza de nós (`queue_free`)
 
 ## 🗺️ Mundo (Salas conectadas)
 
@@ -125,6 +127,10 @@ Todos os dados ficam estritamente em `user://` (local, sem rede):
 - `user://save_slot_0..2.json` — os 3 Save Slots
 - `user://achievements.json` — conquistas desbloqueadas
 - `user://settings.json` — vídeo (tela/resolução) e volumes de áudio
+- `user://game_session.log` — log de sessão estruturado (Passo 25: GameLogger)
+- `user://logs/godot.log` — log nativo da engine (erros/warnings com stack trace)
+- `user://session_active.flag` — marcador de sessão aberta (detecta fim abrupto)
+- `user://last_session_crash.flag` — contexto do crash crítico da sessão anterior
 
 ## Build para Distribuição (Windows)
 1. Baixe os **Export Templates** em `Editor → Manage Export Templates` (mesma versão do Godot)
