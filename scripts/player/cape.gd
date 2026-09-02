@@ -46,7 +46,7 @@ func _process(delta: float) -> void:
 	if parent.has_method("get_facing"):
 		facing = parent.get_facing()
 	if parent is CharacterBody2D:
-		vel = parent.linear_velocity
+		vel = (parent as CharacterBody2D).velocity
 
 	# Anclaje detrás do sprite segundo o facing.
 	var anchor := anchor_offset

@@ -12,6 +12,11 @@ var _time: float = 0.0
 
 func _ready() -> void:
 	_time = randf() * TAU  ## Dessincroniza o flicker entre tochas
+	Culling.register(self)
+
+
+func _exit_tree() -> void:
+	Culling.unregister(self)
 
 
 func _process(delta: float) -> void:

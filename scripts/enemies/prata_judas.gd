@@ -24,6 +24,12 @@ var _player: Node2D = null
 func _ready() -> void:
 	_collect_delay_timer = collect_delay
 	_life_timer = life_time
+	## Passo 21: culling da câmera (moedas muito distantes nao processam física).
+	Culling.register(self)
+
+
+func _exit_tree() -> void:
+	Culling.unregister(self)
 
 
 func _physics_process(delta: float) -> void:

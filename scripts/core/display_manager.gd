@@ -15,6 +15,7 @@ var settings: Dictionary = {
 	"fullscreen": false,
 	"borderless": false,
 	"resolution_idx": 2,
+	"vsync": true,
 	"vol_music": 1.0,
 	"vol_sfx": 1.0,
 	"vol_amb": 0.8,
@@ -56,7 +57,16 @@ func set_resolution(idx: int) -> void:
 	_save_settings()
 
 
+## Passo 21: alterna V-Sync (60 FPS+ com tear eliminado; desligue p/ menor latencia).
+func set_vsync(on: bool) -> void:
+	settings["vsync"] = on
+	_apply_display()
+	_save_settings()
+
+
 func _apply_display() -> void:
+	var vsync := DisplayServer.VSYNC_ENABLED if settings["vsync"] else DisplayServer.VSYNC_DISABLED
+	DisplayServer.window_set_vsync_mode(vsync)
 	if settings["fullscreen"]:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:

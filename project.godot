@@ -109,6 +109,8 @@ SaveManager="*res://scripts/core/save_manager.gd"
 HUD="*res://scripts/ui/hud.gd"
 PauseMenu="*res://scripts/ui/pause_menu.gd"
 DisplayManager="*res://scripts/core/display_manager.gd"
+InputRemap="*res://scripts/core/input_remap.gd"
+Culling="*res://scripts/core/culling_manager.gd"
 DialogueUI="*res://scripts/ui/dialogue_ui.gd"
 
 [physics]

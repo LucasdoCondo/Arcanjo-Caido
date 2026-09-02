@@ -225,13 +225,13 @@ func _ready() -> void:
 		hitbox.monitoring = false  ## Hitbox só liga durante a janela ativa do golpe
 
 	# Passo 17: capa física + emisor de poeira dos pés (criados por código).
-	if $Cape == null:
+	if get_node_or_null("Cape") == null:
 		_cape = Cape2D.new()
 		_cape.name = "Cape"
 		add_child(_cape)
 	else:
-		_cape = $Cape
-	if $DustFX == null:
+		_cape = get_node("Cape") as Cape2D
+	if get_node_or_null("DustFX") == null:
 		var dust := CPUParticles2D.new()
 		dust.name = "DustFX"
 		dust.position = Vector2(0.0, 30.0)
@@ -247,7 +247,7 @@ func _ready() -> void:
 		dust.scale_amount_max = 3.0
 		dust.color = Color(0.45, 0.4, 0.34, 0.55)
 		add_child(dust)
-	_dust_fx = $DustFX
+	_dust_fx = get_node_or_null("DustFX") as CPUParticles2D
 	
 	_dust_fx.emitting = false
 

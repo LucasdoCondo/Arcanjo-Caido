@@ -20,6 +20,12 @@ var destroyed := false
 
 func _ready() -> void:
 	hurtbox.add_to_group("destructible")
+	## Passo 21: culling da câmera (partículas de pedaços param fora da tela).
+	Culling.register(self)
+
+
+func _exit_tree() -> void:
+	Culling.unregister(self)
 
 
 func take_hit(_damage: int, _from_position: Vector2) -> void:

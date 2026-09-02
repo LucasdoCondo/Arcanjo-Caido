@@ -25,6 +25,15 @@ var _push_dir: float = 0.0
 var _time: float = 0.0
 
 
+func _ready() -> void:
+	## Passo 21: registra no culling da câmera (desliga _process fora da tela).
+	Culling.register(self)
+
+
+func _exit_tree() -> void:
+	Culling.unregister(self)
+
+
 func _process(delta: float) -> void:
 	_time += delta
 

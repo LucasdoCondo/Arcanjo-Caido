@@ -2,11 +2,11 @@ shader_type canvas_item;
 // ============================================================================
 // [ARCANJO CAIDO] — Passo 18: Reflexo em superfícies (mercúrio / chão polido).
 // ----------------------------------------------------------------------------
-// Sample a texture da tela (hint_screen_texture) refletida horizontalmente
+// Sample a textura da tela (hint_screen_texture) refletida horizontalmente
 // sobre a linha do espelho (uniform mirror_y, em uv 0..1 = borda superior do
 // ColorRect). Ondas sutis + fade de distância + tint da superfície.
+// NOTA: canvas_item não aceita `render_mode = unshaded` (válido só em spatial).
 // ============================================================================
-render_mode = unshaded;
 
 uniform sampler2D screen_tex : hint_screen_texture, filter_linear, repeat_disable;
 uniform float mirror_y : hint_range(0.0, 1.0) = 0.5;

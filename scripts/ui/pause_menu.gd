@@ -110,15 +110,22 @@ func _build_ui() -> void:
 		var captured: int = i
 		btn_res.pressed.connect(func(): DisplayManager.set_resolution(captured))
 		opts.add_child(btn_res)
+	# Passo 21: V-Sync (ajustavel + persistente em user://settings.json).
+	var btn_vsync := Button.new()
+	btn_vsync.text = "V-Sync: %s" % ("Ligado" if DisplayManager.settings["vsync"] else "Desligado")
+	btn_vsync.pressed.connect(func():
+		DisplayManager.set_vsync(not DisplayManager.settings["vsync"])
+		btn_vsync.text = "V-Sync: %s" % ("Ligado" if DisplayManager.settings["vsync"] else "Desligado"))
+	opts.add_child(btn_vsync)
 	opts.add_child(HSeparator.new())
-	_add_label(opts, "CONTROLES")
-	for line in [
-		"A/D ou ←/→: mover     Espaço/Z: pular (2x com Asas Caídas)",
-		"Shift/X: Dash de Sombra     S+Shift no ar: Macho de Ferro",
-		"J: Lâmina do Alvorecer     C: Sombra de Voo (gancho)",
-		"F (segurar): Cura canalizada     E: interagir     M: mapa     Esc: pausa",
-	]:
-		_add_label(opts, line)
+	_add_label(opts, "CONTROLES (clique no botão para remapear)")
+	_add_rebind_rows(opts)
+	var btn_reset_controls := Button.new()
+	btn_reset_controls.text = "Restaurar Controles Padrão"
+	btn_reset_controls.pressed.connect(func():
+		InputRemap.reset_all()
+		_refresh_rebind_rows(opts))
+	opts.add_child(btn_reset_controls)
 
 
 func _add_label(parent: Control, text: String) -> void:
@@ -145,6 +152,90 @@ func _add_slider(parent: Control, label_text: String, bus_name: String) -> void:
 	slider.custom_minimum_size = Vector2(240.0, 20.0)
 	row.add_child(slider)
 	slider.value_changed.connect(func(v): AudioManager.set_bus_volume(bus_name, v))
+
+
+# ---------------------------------------------------------------------------
+# PASSO 21: REMAPEAMENTO DE TECLAS/CONTROLE (InputRemap autoload → InputMap)
+# ---------------------------------------------------------------------------
+## Estado do rebind em andamento (acao sendo remapeada). Quando nao vazio,
+## o _input a seguir captura a proxima tecla/botao pressionado.
+var _pending_rebind: String = ""
+
+var _rebind_buttons: Dictionary = {}  ## action -> Button (para atualizar rotulo)
+
+
+func _add_rebind_rows(parent: Control) -> void:
+	_rebind_buttons.clear()
+	for entry in InputRemap.ACTIONS:
+		var action: String = entry["action"]
+		var row := HBoxContainer.new()
+		parent.add_child(row)
+		var label := Label.new()
+		label.text = entry["label"]
+		label.custom_minimum_size = Vector2(210.0, 0.0)
+		label.add_theme_color_override("font_color", COL_TEXT)
+		row.add_child(label)
+		var btn := Button.new()
+		var captured_action: String = action
+		btn.text = "Tecla: %s" % InputRemap.get_bind_text(captured_action)
+		btn.pressed.connect(func(): _begin_rebind(captured_action))
+		btn.custom_minimum_size = Vector2(200.0, 0.0)
+		row.add_child(btn)
+		_rebind_buttons[action] = btn
+
+
+## Liga o modo de captura: a proxima tecla/botao sera atribuida a acao.
+func _begin_rebind(action: String) -> void:
+	if _pending_rebind != "":
+		## Desiste do rebind anterior.
+		var prev: Button = _rebind_buttons.get(_pending_rebind)
+		if prev:
+			prev.text = "Tecla: %s" % InputRemap.get_bind_text(_pending_rebind)
+	_pending_rebind = action
+	var btn: Button = _rebind_buttons.get(action)
+	if btn:
+		btn.text = "... pressione a nova tecla (Esc cancela) ..."
+
+
+func _refresh_rebind_rows(parent: Control) -> void:
+	## Atualiza os rotulos dos botoes de rebind em todos os paineis disponiveis.
+	for action in _rebind_buttons:
+		var btn: Button = _rebind_buttons[action]
+		btn.text = "Tecla: %s" % InputRemap.get_bind_text(action)
+
+
+func _input(event: InputEvent) -> void:
+	if _pending_rebind == "":
+		return
+	## Libera com Esc sem alterar.
+	if event is InputEventKey and event.pressed and event.physical_keycode == KEY_ESCAPE:
+		_cancel_rebind()
+		get_viewport().set_input_as_handled()
+		return
+	## Aceita tecla ou botao de gamepad.
+	if event is InputEventKey and event.pressed:
+		_apply_rebind(event)
+		get_viewport().set_input_as_handled()
+	elif event is InputEventJoypadButton and event.pressed:
+		_apply_rebind(event)
+		get_viewport().set_input_as_handled()
+
+
+func _apply_rebind(event: InputEvent) -> void:
+	var action: String = _pending_rebind
+	if InputRemap.rebind_action(action, event):
+		var btn: Button = _rebind_buttons.get(action)
+		if btn:
+			btn.text = "Tecla: %s" % InputRemap.get_bind_text(action)
+	_pending_rebind = ""
+
+
+func _cancel_rebind() -> void:
+	if _pending_rebind != "":
+		var prev: Button = _rebind_buttons.get(_pending_rebind)
+		if prev:
+			prev.text = "Tecla: %s" % InputRemap.get_bind_text(_pending_rebind)
+	_pending_rebind = ""
 
 
 func _unhandled_input(event: InputEvent) -> void:

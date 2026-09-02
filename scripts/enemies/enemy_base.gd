@@ -43,8 +43,10 @@ enum AIState { PATROL, CHASE, ATTACK, HURT, DEAD }
 @export var loot_scene: PackedScene            ## Cena da Prata de Judas
 @export var loot_amount: int = 3
 
-@export_group("Otimização (Passo 14)")
-@export var cull_distance: float = 1400.0      ## IA congelada além desta distância
+@export_group("Otimização (Passo 14/21)")
+@export var cull_distance: float = 1400.0      ## Igual ao raio antigo; mantido por compatibilidade.
+## O Passo 21 usa o autoload Culling (baseado na área visível da câmera),
+## que desliga _physics_process/_process e partículas fora da tela.
 
 # ---------------------------------------------------------------------------
 # ESTADO
@@ -65,6 +67,12 @@ var _player: Node2D = null
 func _ready() -> void:
 	hp = max_hp
 	start_position = global_position
+	## Passo 21: registra no sistema de culling da câmera (grupo "cullable").
+	Culling.register(self)
+
+
+func _exit_tree() -> void:
+	Culling.unregister(self)
 
 
 func _physics_process(delta: float) -> void:
@@ -79,15 +87,6 @@ func _physics_process(delta: float) -> void:
 	# Cache do jogador (grupo "player").
 	if _player == null:
 		_player = get_tree().get_first_node_in_group("player")
-
-	# Passo 14: CULLING — congela a IA fora do alcance da câmera/jogador
-	# (economiza CPU com dezenas de inimigos em salas grandes).
-	if _player and global_position.distance_to(_player.global_position) > cull_distance:
-		velocity.x = 0.0
-		if not is_on_floor():
-			velocity.y = minf(velocity.y + gravity * delta, 1300.0)
-		move_and_slide()
-		return
 
 	_cooldown_timer = maxf(_cooldown_timer - delta, 0.0)
 
