@@ -22,6 +22,7 @@ enum AIState { PATROL, CHASE, ATTACK, HURT, DEAD }
 @export var max_hp: int = 20
 @export var flash_duration: float = 0.15
 @export var hurt_stagger_time: float = 0.25    ## Tempo "atordoado" ao tomar golpe
+@export var flash_color: Color = Color(2.5, 2.5, 2.5, 1.0)  ## Passo 20: Flash BRANCO ao receber golpe
 
 @export_group("Movimento")
 @export var move_speed: float = 90.0           ## Velocidade de patrulha
@@ -192,8 +193,8 @@ func take_hit(damage: int, from_position: Vector2) -> void:
 	hp = maxi(hp - damage, 0)
 	health_changed.emit(hp, max_hp)
 
-	# Flash vermelho de dano.
-	visual.modulate = Color(3.0, 0.5, 0.5)
+	# Passo 20: Flash BRANCO de dano (material override).
+	visual.modulate = flash_color
 	_flash_timer = flash_duration
 
 	# Knockback na direção oposta ao golpe.
@@ -201,6 +202,10 @@ func take_hit(damage: int, from_position: Vector2) -> void:
 	if dir == 0.0:
 		dir = -float(facing)
 	velocity = Vector2(dir * knockback_force, -knockback_force * 0.4)
+
+	# Passo 20: Hit Stop + Camera Shake ao receber golpe
+	CombatManager.hit_stop(hp <= 0)
+	CombatManager.camera_shake(3.0 if hp > 0 else 6.0, 0.15 if hp > 0 else 0.3)
 
 	if hp <= 0:
 		_die()

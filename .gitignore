@@ -11,3 +11,6 @@ Desktop.ini
 # Backups de editor
 *.tmp
 *~
+
+# Scripts temporários de validação local (não entram no repositório)
+tmp_validate*.ps1

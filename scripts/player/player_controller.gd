@@ -613,7 +613,8 @@ func _check_melee_hits() -> void:
 
 		if hit_something:
 			_gain_chama(chama_por_golpe)
-			GameState.hit_stop(0.035, 0.1)  ## Passo 13: hit stop no acerto
+			CombatManager.hit_stop(false)  ## Passo 20: hit stop no acerto
+			CombatManager.camera_shake(2.0, 0.08)  ## Passo 20: tremor leve
 
 			# Passo 17: faíscas no contato + sangue negro dos inimigos.
 			var contact := hitbox.global_position
@@ -690,8 +691,8 @@ func _process_ground_pound(delta: float) -> void:
 
 
 func _ground_pound_impact() -> void:
-	shake_camera(7.0, 0.25)
-	GameState.hit_stop(0.08, 0.15)  ## Passo 13: peso do impacto
+	CombatManager.camera_shake(7.0, 0.25)  ## Passo 20: tremor forte
+	CombatManager.hit_stop(true)  ## Passo 20: peso do impacto
 	# Passo 16: achatamento forte — peso do impacto no chão.
 	_apply_squash(false, 1.3)
 	if land_fx:
@@ -849,8 +850,8 @@ func take_damage(amount: int, source_position: Vector2 = Vector2(1e9, 1e9)) -> v
 		_parry_timer = 0.0
 		_iframes_timer = 0.25
 		AudioManager.sfx("parry")
-		GameState.hit_stop(0.09, 0.05)  ## Freeze frame do reflexo perfeito
-		shake_camera(5.0, 0.2)
+		CombatManager.hit_stop(true)  ## Freeze frame do reflexo perfeito
+		CombatManager.camera_shake(5.0, 0.2)  ## Tremor do reflexo
 		# Contra-golpe: stagger nos inimigos ao alcance da lâmina.
 		for area in shockwave.get_overlapping_areas():
 			var target: Node = area.owner if area.owner != null else area.get_parent()
@@ -867,7 +868,8 @@ func take_damage(amount: int, source_position: Vector2 = Vector2(1e9, 1e9)) -> v
 	damaged.emit(amount)
 	health_changed.emit(current_health, max_health)
 	_cancel_heal()
-	GameState.hit_stop(0.07, 0.1)  ## Passo 13: peso ao sofrer dano
+	CombatManager.hit_stop(false)  ## Passo 20: peso ao sofrer dano
+	CombatManager.camera_shake(4.0, 0.2)  ## Passo 20: tremor ao tomar golpe
 
 	# Knockback na direção oposta à fonte do dano.
 	var dir := signf(global_position.x - source_position.x)

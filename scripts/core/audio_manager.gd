@@ -1,17 +1,24 @@
 extends Node
 ## ============================================================================
-## [ARCANJO CAIDO] — Autoload: AudioManager (Passo 11)
+## [ARCANJO CAIDO] — Autoload: AudioManager (Passo 11 + Passo 19)
 ## ----------------------------------------------------------------------------
 ## Gerenciador central de áudio 100% offline:
 ##   - Buses separados: "Music" (BGM), "SFX" e "Ambience"
 ##   - Crossfade suave entre trilhas ao mudar de região / entrar em chefe
 ##   - SFX globais: AudioManager.sfx("jump" | "sword" | "hurt" | "coin" ...)
+##   - Pitch variation em sons repetitivos (passos, lâminas, golpes)
 ##   - Como o projeto ainda não tem assets de áudio, os sons e as trilhas são
 ##     SINTETIZADOS em tempo real (AudioStreamWAV gerado por código). Quando
 ##     os .ogg/.wav reais chegarem, basta trocar os streams deste arquivo.
+## ⚠️ ONDE CONECTAR ASSETS REAIS (.wav/.ogg):
+##   - Substitua as chamadas `_make_tone(...)` / `_make_track(...)` por
+##     `preload("res://assets/audio/nome_do_arquivo.ogg")`.
+##   - Exemplo: "jump" → preload("res://assets/audio/sfx/jump_01.wav")
+##   - Os SFX pools e o crossfade funcionam com qualquer AudioStream.
 ## ============================================================================
 
 signal bus_volume_changed(bus_name: String, linear: float)
+signal music_changed(track_id: String)
 
 const SAMPLE_RATE := 22050
 const SFX_POOL_SIZE := 10
@@ -27,6 +34,15 @@ const TRACK_DEFS := {
 	"boss": [65.41, "tenso"],
 }
 
+## ⚠️ ONDE CONECTAR ASSETS REAIS DE MÚSICA:
+## Substitua `_get_track(track_id)` por um dicionário de preload():
+##   const TRACK_ASSETS = {
+##     "cripta_estrelas": preload("res://assets/audio/bgm/cripta_estrelas.ogg"),
+##     "boss": preload("res://assets/audio/bgm/boss_theme.ogg"),
+##     ...
+##   }
+## E retorne TRACK_ASSETS[track_id] em vez de sintetizar.
+
 var _sounds: Dictionary = {}
 var _tracks: Dictionary = {}
 var _bgm_a: AudioStreamPlayer
@@ -36,8 +52,16 @@ var _sfx_players: Array[AudioStreamPlayer] = []
 var _sfx_idx: int = 0
 var _using_a: bool = false
 var _current_track: String = ""
-var _player: Node = null
+## Sem tipo estático para permitir acesso dinâmico ao enum State do player
+## (PlayerController) em tempo de execução; assim o autoload não depende do
+## class cache global, evitando erro de parse no boot headless/fresh-clone.
+var _player = null
 var _hooks_connected: bool = false
+
+## Passo 19: controle de pitch variation por som
+## Sons que recebem variação aleatória de tom (0.9x a 1.1x) para evitar fadiga sonora
+var _pitch_var_sounds: Dictionary = {}
+var _default_pitch: float = 1.0
 
 
 func _ready() -> void:
@@ -45,6 +69,7 @@ func _ready() -> void:
 	_setup_buses()
 	_build_players()
 	_synth_sounds()
+	_setup_pitch_variation()
 
 
 # ---------------------------------------------------------------------------
@@ -150,6 +175,9 @@ func _wav_from_data(data: PackedByteArray, looping: bool) -> AudioStreamWAV:
 
 
 func _synth_sounds() -> void:
+	# ⚠️ ONDE CONECTAR ASSETS REAIS DE SFX:
+	# Substitua cada linha por preload("res://assets/audio/sfx/nome.ogg")
+	# Exemplo: "jump" → preload("res://assets/audio/sfx/jump_01.wav")
 	_sounds = {
 		"jump": _make_tone(520.0, 0.16, "square", 0.3),
 		"dash": _make_tone(300.0, 0.14, "saw", 0.28),
@@ -162,19 +190,57 @@ func _synth_sounds() -> void:
 		"unlock": _make_tone(880.0, 0.5, "sine", 0.4),
 		"achievement": _make_tone(1040.0, 0.35, "sine", 0.4),
 		"parry": _make_tone(1500.0, 0.12, "square", 0.35),
+		"pogo": _make_tone(700.0, 0.1, "square", 0.3),
+		"ground_pound": _make_tone(80.0, 0.3, "saw", 0.5),
+		"chama_drain": _make_tone(440.0, 0.25, "sine", 0.3),
+		"vase_break": _make_tone(600.0, 0.15, "noise", 0.4),
+		"wall_slide": _make_tone(200.0, 0.08, "noise", 0.15),
 	}
+
+
+# ===========================================================================
+# PASSO 19: PITCH VARIATION (variação aleatória de tom)
+# ---------------------------------------------------------------------------
+# Sons repetitivos (passos, lâminas, golpes) recebem leve variação de pitch
+# entre 0.9x e 1.1x para evitar "fadiga sonora" — o cérebro percebe como
+# orgânico em vez de loop mecânico.
+# ---------------------------------------------------------------------------
+func _setup_pitch_variation() -> void:
+	# ⚠️ ADICIONE AQUI os sons que devem ter pitch variation:
+	# Basta adicionar o nome do som ao dicionário com o range desejado.
+	_pitch_var_sounds = {
+		"step": Vector2(0.88, 1.12),    # passos: variação ampla
+		"sword": Vector2(0.92, 1.08),   # lâminas: variação sutil
+		"jump": Vector2(0.95, 1.05),    # pulo: variação mínima
+		"dash": Vector2(0.90, 1.10),    # dash: variação média
+		"coin": Vector2(0.95, 1.15),    # moedas: variação ascendente
+		"parry": Vector2(0.98, 1.02),   # parry: variação quase nula
+	}
+
+
+## Aplica variação aleatória de pitch a um AudioStreamPlayer.
+## Chamado internamente antes de tocar sons repetitivos.
+func _apply_pitch_variation(player: AudioStreamPlayer, sound_name: String) -> void:
+	if _pitch_var_sounds.has(sound_name):
+		var range: Vector2 = _pitch_var_sounds[sound_name]
+		player.pitch_scale = randf_range(range.x, range.y)
+	else:
+		player.pitch_scale = _default_pitch
 
 # ===========================================================================
 # API PÚBLICA
 # ===========================================================================
 func sfx(sound_name: String) -> void:
 	## Trigger global de efeito sonoro: AudioManager.sfx("sword")
+	## Aplica pitch variation automática em sons repetitivos.
 	var stream: AudioStreamWAV = _sounds.get(sound_name)
 	if stream == null:
 		return
 	var p := _sfx_players[_sfx_idx]
 	_sfx_idx = (_sfx_idx + 1) % _sfx_players.size()
 	p.stream = stream
+	# Passo 19: pitch variation para evitar fadiga sonora
+	_apply_pitch_variation(p, sound_name)
 	p.play()
 
 
@@ -183,6 +249,7 @@ func play_music(track_id: String, fade: float = 1.5) -> void:
 	if _current_track == track_id:
 		return
 	_current_track = track_id
+	music_changed.emit(track_id)
 
 	var incoming := _bgm_b if _using_a else _bgm_a
 	var outgoing := _bgm_a if _using_a else _bgm_b
@@ -197,6 +264,25 @@ func play_music(track_id: String, fade: float = 1.5) -> void:
 	tw.tween_property(incoming, "volume_db", 0.0, fade)
 	tw.tween_property(outgoing, "volume_db", -40.0, fade)
 	tw.chain().tween_callback(outgoing.stop)
+
+
+# ---------------------------------------------------------------------------
+# PASSO 19: MÚSICA DE CHEFE — swap dinâmico na arena
+# ---------------------------------------------------------------------------
+## Troca instantânea para a versão de batalha ao entrar na arena de um chefe.
+## Se já estiver tocando o tema de chefe, não faz nada.
+func play_boss_music(fade: float = 0.8) -> void:
+	## Chamado ao entrar na arena de um chefe.
+	## Exemplo: AudioManager.play_boss_music(0.5) para transição rápida.
+	play_music("boss", fade)
+
+
+## Retorna a música de região ao sair da arena de chefe.
+## Parâmetro: track_id da região de origem (ex: "catedral_avareza").
+func exit_boss_music(region_track: String = "cripta_estrelas", fade: float = 1.2) -> void:
+	## Chamado ao sair da arena de um chefe.
+	## Exemplo: AudioManager.exit_boss_music("catedral_avareza")
+	play_music(region_track, fade)
 
 
 func _get_track(track_id: String) -> AudioStreamWAV:
@@ -241,8 +327,12 @@ func _process(_delta: float) -> void:
 
 
 func _on_player_state(new_state: int) -> void:
-	match new_state:
-		PlayerController.State.JUMP:
-			sfx("jump")
-		PlayerController.State.ATTACK:
-			sfx("sword")
+	## Nota: comparamos com _player.State.JUMP/ATTACK em tempo de execução
+	## (acesso dinâmico) para que este autoload não dependa da classe global
+	## PlayerController em tempo de parse — ver declaração de `_player`.
+	if _player == null:
+		return
+	if new_state == _player.State.JUMP:
+		sfx("jump")
+	elif new_state == _player.State.ATTACK:
+		sfx("sword")
