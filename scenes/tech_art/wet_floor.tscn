@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/wet_floor.gdshader" id="1_shader"]
+[ext_resource type="Script" path="res://scripts/tech_art/wet_floor_controller.gd" id="2_script"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wet"]
+shader = ExtResource("1_shader")
+shader_parameter/reflection_strength = 0.6
+shader_parameter/roughness = 0.3
+shader_parameter/wetness = 0.7
+shader_parameter/puddle_frequency = 8.0
+shader_parameter/puddle_depth = 0.4
+
+[node name="WetFloor" type="ColorRect"]
+material = SubResource("ShaderMaterial_wet")
+offset_left = -1200.0
+offset_top = 700.0
+offset_right = 1200.0
+offset_bottom = 800.0
+color = Color(0.1, 0.1, 0.12, 1.0)
+script = ExtResource("2_script")
+wetness = 0.7
+reflection_strength = 0.6
+roughness = 0.3
+track_player = true
+max_tracked_lights = 4

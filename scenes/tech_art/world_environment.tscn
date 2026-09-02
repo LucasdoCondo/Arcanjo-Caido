@@ -1,0 +1,47 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/tech_art/post_process_controller.gd" id="1_script"]
+
+[sub_resource type="Environment" id="Environment_global"]
+background_mode = 3
+background_color = Color(0.02, 0.02, 0.04, 1)
+
+# Glow / Bloom
+glow_enabled = true
+glow_levels/1 = 0.5
+glow_levels/2 = 0.8
+glow_levels/3 = 1.0
+glow_levels/4 = 1.2
+glow_levels/5 = 1.5
+glow_levels/6 = 2.0
+glow_intensity = 0.8
+glow_strength = 1.2
+glow_bloom = 0.3
+glow_blend_mode = 0
+glow_hdr_threshold = 0.8
+glow_hdr_luminance_cap = 10.0
+glow_hdr_scale = 1.5
+
+# Tonemapping
+tonemapper = 2
+
+# Color Correction
+adjustment_enabled = true
+adjustment_brightness = 0.95
+adjustment_contrast = 1.1
+adjustment_saturation = 1.15
+
+# Ambient
+ambient_light_color = Color(0.1, 0.15, 0.25, 1)
+ambient_light_energy = 0.15
+
+[node name="WorldEnvironment" type="WorldEnvironment"]
+environment = SubResource("Environment_global")
+script = ExtResource("1_script")
+glow_enabled = true
+glow_intensity = 0.8
+glow_hdr_threshold = 0.8
+glow_bloom = 0.3
+brightness = 0.95
+contrast = 1.1
+saturation = 1.15

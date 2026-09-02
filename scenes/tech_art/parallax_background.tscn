@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/tech_art/parallax_system.gd" id="1_script"]
+
+[sub_resource type="Gradient" id="Gradient_sky"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.02, 0.03, 0.08, 1, 0.05, 0.08, 0.15, 1, 0.1, 0.15, 0.25, 1)
+
+[sub_resource type="GradientTexture2D" id="Texture_sky"]
+gradient = SubResource("Gradient_sky")
+width = 1920
+height = 1080
+fill_from = Vector2(0, 0)
+fill_to = Vector2(0, 1)
+
+[node name="ParallaxBackground" type="ParallaxBackground"]
+motion_mirroring = Vector2(1920, 0)
+script = ExtResource("1_script")
+layer_count = 7
+texture_sky = SubResource("Texture_sky")
+scale_sky = Vector2(0, 0)
+scale_mountains_far = Vector2(0.05, 0.02)
+scale_mountains_near = Vector2(0.15, 0.05)
+scale_forest_far = Vector2(0.3, 0.1)
+scale_forest_near = Vector2(0.5, 0.15)
+scale_details = Vector2(0.7, 0.2)
+scale_foreground = Vector2(0.9, 0.3)
