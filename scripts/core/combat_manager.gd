@@ -25,6 +25,7 @@ var _shake_timer: float = 0.0
 var _shake_intensity: float = 0.0
 var _shake_duration: float = 0.0
 var _shake_seed: float = 0.0
+var _shake_offset: Vector2 = Vector2.ZERO  ## Offset calculado (consumido pelo PlayerController)
 var _camera: Camera2D = null
 
 
@@ -39,17 +40,24 @@ func _process(delta: float) -> void:
 		if _hit_stop_timer <= 0.0:
 			Engine.time_scale = 1.0
 
-	# Camera Shake: aplica offset com Perlin noise
+	# Camera Shake: CALCULA o offset com Perlin noise e decay exponencial.
+	# NOTA: nao aplicamos direto em _camera.offset aqui - o PlayerController
+	# soma get_shake_offset() ao look-ahead (sem conflito entre os sistemas).
 	if _shake_timer > 0.0:
 		_shake_timer -= delta
-		if _camera != null:
-			var progress := 1.0 - (_shake_timer / _shake_duration)
-			var decay := pow(2.0, -3.0 * progress)  # Decay exponencial suave
-			var offset_x := _perlin_noise(_shake_seed, progress * 5.0) * _shake_intensity * decay
-			var offset_y := _perlin_noise(_shake_seed + 100.0, progress * 5.0) * _shake_intensity * decay
-			_camera.offset = Vector2(offset_x, offset_y)
+		var progress := 1.0 - (_shake_timer / _shake_duration)
+		var decay := pow(2.0, -3.0 * progress)  # Decay exponencial suave
+		var offset_x := _perlin_noise(_shake_seed, progress * 5.0) * _shake_intensity * decay
+		var offset_y := _perlin_noise(_shake_seed + 100.0, progress * 5.0) * _shake_intensity * decay
+		_shake_offset = Vector2(offset_x, offset_y)
 		if _shake_timer <= 0.0:
-			_camera.offset = Vector2.ZERO
+			_shake_offset = Vector2.ZERO
+
+
+## Retorna o offset de tremor calculado no _process (Perlin + decay).
+## O PlayerController soma este valor ao look-ahead da camera.
+func get_shake_offset() -> Vector2:
+	return _shake_offset
 
 
 # ---------------------------------------------------------------------------

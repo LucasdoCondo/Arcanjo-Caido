@@ -181,10 +181,12 @@ func _synth_sounds() -> void:
 	_sounds = {
 		"jump": _make_tone(520.0, 0.16, "square", 0.3),
 		"dash": _make_tone(300.0, 0.14, "saw", 0.28),
+		"step": _make_tone(140.0, 0.06, "noise", 0.2),
+		"land": _make_tone(130.0, 0.11, "noise", 0.3),
+		"hit": _make_tone(660.0, 0.09, "square", 0.26),
 		"sword": _make_tone(900.0, 0.09, "noise", 0.32),
 		"hurt": _make_tone(170.0, 0.3, "square", 0.45),
 		"coin": _make_tone(1250.0, 0.12, "sine", 0.35),
-		"step": _make_tone(140.0, 0.06, "noise", 0.2),
 		"death": _make_tone(110.0, 0.6, "saw", 0.45),
 		"heal": _make_tone(660.0, 0.4, "sine", 0.35),
 		"unlock": _make_tone(880.0, 0.5, "sine", 0.4),
@@ -208,8 +210,12 @@ func _synth_sounds() -> void:
 func _setup_pitch_variation() -> void:
 	# ⚠️ ADICIONE AQUI os sons que devem ter pitch variation:
 	# Basta adicionar o nome do som ao dicionário com o range desejado.
+	# Passo 19: aplica pitch variation nos sons de passos/aterrissagem/acerto
+	# (já cobertos pelos intervalos e hits — pitch variação evita fadiga).
 	_pitch_var_sounds = {
 		"step": Vector2(0.88, 1.12),    # passos: variação ampla
+		"land": Vector2(0.90, 1.10),    # aterrissagem: variação média
+		"hit": Vector2(0.92, 1.08),     # acerto de golpe: variação sutil
 		"sword": Vector2(0.92, 1.08),   # lâminas: variação sutil
 		"jump": Vector2(0.95, 1.05),    # pulo: variação mínima
 		"dash": Vector2(0.90, 1.10),    # dash: variação média

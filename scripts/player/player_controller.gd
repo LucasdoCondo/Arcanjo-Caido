@@ -71,6 +71,12 @@ enum State {
 @export var ghost_lifetime: float = 0.3         ## Duração do fade-out (s)
 
 # ---------------------------------------------------------------------------
+# PASSO 19: TRIGGERS DE ÁUDIO — cadências de SFX no player
+# ---------------------------------------------------------------------------
+@export_group("Trigger de Passos (Passo 19)")
+@export var step_interval: float = 0.24         ## Cadência do som "step" ao correr no chão
+
+# ---------------------------------------------------------------------------
 # PULO (altura variável + coyote time + buffer)
 # ---------------------------------------------------------------------------
 @export_group("Pulo")
@@ -160,8 +166,6 @@ var _wall_dir: int = 0               ## -1 parede à esquerda, 1 à direita, 0 n
 var _gp_hover_timer: float = 0.0
 var _hook_target: Node2D = null
 var _hook_timer: float = 0.0
-var _shake_time: float = 0.0
-var _shake_intensity: float = 0.0
 var _was_airborne: bool = false
 var _look_offset: Vector2 = Vector2.ZERO
 var _parry_timer: float = 0.0       ## Janela de parry ativa
@@ -179,6 +183,7 @@ var _lean_angle: float = 0.0              ## Rotação suavizada atual (Rotation
 var _cape: Cape2D = null                  ## Capa física (juntas) criada no _ready
 var _dust_fx: CPUParticles2D = null        ## Poeira dos pés (Passo 17)
 var _ghost_timer: float = 0.0              ## Acumulador para os afterimages do dash
+var _step_timer: float = 0.0              ## Passo 19: cadencia do som de passos
 
 # --- Combate (Passo 2) ---
 var _attack_dir: Direction = Direction.NEUTRAL
@@ -318,6 +323,8 @@ func _physics_process(delta: float) -> void:
 			_landing_pending = true
 			var fall_factor := clampf(absf(_fall_impact_speed) * squash_fall_factor, 0.4, 1.3)
 			_apply_squash(false, fall_factor)
+			# Passo 19: som de aterrissagem (só no impacto principal, não duplicado).
+			AudioManager.sfx("land")
 		# Passo 17: nuvem de poeira ao aterrissar (reforza o impacto).
 		if _dust_fx:
 			_dust_fx.restart()
@@ -341,6 +348,13 @@ func _physics_process(delta: float) -> void:
 	# Passo 17: poeira dos pés ao correr no chão.
 	if _dust_fx:
 		_dust_fx.emitting = is_on_floor() and state == State.WALK and absf(velocity.x) > 60.0
+
+	# Passo 19: som de passos com cadência (pitch variation automática).
+	if state == State.WALK and is_on_floor() and absf(velocity.x) > 60.0:
+		_step_timer -= delta
+		if _step_timer <= 0.0:
+			_step_timer = step_interval
+			AudioManager.sfx("step")
 
 
 # ===========================================================================
@@ -613,6 +627,7 @@ func _check_melee_hits() -> void:
 
 		if hit_something:
 			_gain_chama(chama_por_golpe)
+			AudioManager.sfx("hit")  ## Passo 19: acerto de golpe no inimigo
 			CombatManager.hit_stop(false)  ## Passo 20: hit stop no acerto
 			CombatManager.camera_shake(2.0, 0.08)  ## Passo 20: tremor leve
 
@@ -633,6 +648,8 @@ func _check_melee_hits() -> void:
 				velocity.y = pogo_force
 				# Passo 16: rebate com uma leve esticada (impulso elástico).
 				_apply_squash(true, 0.7)
+				# Passo 19: SFX do pogo strike (rebate sonoro da lâmina).
+				AudioManager.sfx("pogo")
 				# Permite encadear outro pogo imediatamente (estilo HK).
 				_hits_this_swing.clear()
 				return
@@ -661,6 +678,12 @@ func _do_wall_jump() -> void:
 func _process_wall_slide(delta: float) -> void:
 	velocity.x = 0.0
 	velocity.y = minf(velocity.y + gravity * delta, wall_slide_speed)
+
+	# Passo 19: som de atrito na parede (com cadência).
+	_step_timer -= delta
+	if _step_timer <= 0.0:
+		_step_timer = step_interval
+		AudioManager.sfx("wall_slide")
 
 	# Salta da parede (para longe dela).
 	if jump_buffer_timer > 0.0:
@@ -691,6 +714,8 @@ func _process_ground_pound(delta: float) -> void:
 
 
 func _ground_pound_impact() -> void:
+	# Passo 19: SFX do impacto do Macho de Ferro.
+	AudioManager.sfx("ground_pound")
 	CombatManager.camera_shake(7.0, 0.25)  ## Passo 20: tremor forte
 	CombatManager.hit_stop(true)  ## Passo 20: peso do impacto
 	# Passo 16: achatamento forte — peso do impacto no chão.
@@ -770,9 +795,9 @@ func drain_chama(amount: float) -> float:
 
 
 ## Tremor de câmera (impactos do Macho de Ferro, transição do chefe etc.).
+## Passo 20: delega ao CombatManager (Perlin + decay + integração com look-ahead).
 func shake_camera(intensity: float, duration: float) -> void:
-	_shake_intensity = intensity
-	_shake_time = duration
+	CombatManager.camera_shake(intensity, duration)
 
 
 func _update_camera_shake(delta: float) -> void:
@@ -783,13 +808,9 @@ func _update_camera_shake(delta: float) -> void:
 	var target := Vector2(facing * 70.0, -24.0)
 	_look_offset = _look_offset.lerp(target, 1.0 - pow(0.001, delta))
 
-	# Tremor proporcional ao impacto (gerenciado via shake_camera).
-	var shake := Vector2.ZERO
-	if _shake_time > 0.0:
-		_shake_time -= delta
-		shake = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * _shake_intensity
-
-	camera.offset = _look_offset + shake
+	# Passo 20: o offset de tremor vem do CombatManager (Perlin + decay),
+	# somado ao look-ahead — sem conflito entre os dois sistemas.
+	camera.offset = _look_offset + CombatManager.get_shake_offset()
 
 
 # ===========================================================================
@@ -813,6 +834,8 @@ func _can_start_heal() -> bool:
 func _start_heal() -> void:
 	_is_healing = true
 	_heal_channel_timer = heal_channel_time
+	# Passo 19: dreno da Chama Negra ao iniciar a canalização da cura.
+	AudioManager.sfx("chama_drain")
 
 
 func _process_heal_channel(delta: float) -> void:
@@ -832,6 +855,8 @@ func _complete_heal() -> void:
 	current_health = mini(current_health + heal_amount, max_health)
 	chama_changed.emit(chama_negra, chama_max)
 	health_changed.emit(current_health, max_health)
+	# Passo 19: som de conclusão da cura.
+	AudioManager.sfx("heal")
 
 
 func _cancel_heal() -> void:

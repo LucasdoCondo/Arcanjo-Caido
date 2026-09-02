@@ -31,6 +31,8 @@ func smash() -> void:
 	if destroyed:
 		return
 	destroyed = true
+	# Passo 19: SFX de quebra de vaso/estátua.
+	AudioManager.sfx("vase_break")
 	for i in shards_count:
 		var shard := RigidBody2D.new()
 		shard.global_position = global_position + Vector2(randf_range(-6.0, 6.0), randf_range(-12.0, 0.0))
