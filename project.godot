@@ -8,6 +8,7 @@ config_version=5
 
 config/name="ARCANJO CAIDO"
 config/description="Metroidvania offline protagonizado por Lúcifer no Limbo Cósmico de Aeterna."
+config/version="1.0.0"
 run/main_scene="res://scenes/ui/menu_principal.tscn"
 config/features=PackedStringArray("4.2", "2D")
 config/icon="res://icon.svg"
@@ -20,6 +21,9 @@ window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep"
+; Passo 24: VSync ligado por padrao (0=desligado, 1=sempre, 2=adaptativo).
+; O DisplayManager (Passo 21) permite alternar no menu de Opcoes.
+window/vsync/vsync_mode=1
 
 [input]
 
@@ -112,10 +116,10 @@ DisplayManager="*res://scripts/core/display_manager.gd"
 InputRemap="*res://scripts/core/input_remap.gd"
 Culling="*res://scripts/core/culling_manager.gd"
 DialogueUI="*res://scripts/ui/dialogue_ui.gd"
-;; Passo 23: DevMenu é ferramenta de QA — autodestrói-se fora de builds de
-;; debug (OS.is_debug_build) e deve ser excluído do export via filtro
-;; "scripts/debug/*" no export_presets.cfg.
-DevMenu="*res://scripts/debug/dev_menu.gd"
+;; Passo 24: o DevMenu NÃO é mais autoload — é carregado em runtime apenas em
+;; builds de debug (bootstrap no main_menu.gd). Assim o export com o filtro
+;; "scripts/debug/*" remove o código de QA do pacote final por completo,
+;; sem erros de autoload no lançamento.
 
 [physics]
 

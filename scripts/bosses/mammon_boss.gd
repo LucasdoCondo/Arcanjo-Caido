@@ -228,8 +228,8 @@ func _process_drain(delta: float) -> void:
 	## DRENO DE ALMAS: Lúcifer parado e perto demais tem a Chama Negra sugada.
 	if _player == null or not _player.has_method("drain_chama"):
 		return
-	var near := global_position.distance_to(_player.global_position) < drain_radius
-	var still := _player.velocity.length() < 40.0
+	var near: bool = global_position.distance_to(_player.global_position) < drain_radius
+	var still: bool = _player.velocity.length() < 40.0
 	if near and still:
 		_drain_time += delta
 		if _drain_time >= drain_delay:

@@ -35,6 +35,7 @@ var _settings                     ## Instância do SettingsPanel (preload)
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	AudioManager.play_music("menu")
+	_bootstrap_dev_menu()
 
 	# --- Fundo base ---
 	var bg := ColorRect.new()
@@ -175,6 +176,29 @@ func _add_menu_button(text: String, callback: Callable) -> void:
 	btn.custom_minimum_size = Vector2(280.0, 44.0)
 	btn.pressed.connect(callback)
 	_menu_box.add_child(btn)
+
+
+# ---------------------------------------------------------------------------
+# PASSO 24: BOOTSTRAP DO DEV MENU (só em builds de debug)
+# ---------------------------------------------------------------------------
+func _bootstrap_dev_menu() -> void:
+	## O DevMenu NÃO é autoload (Passo 24): é anexado à raiz da árvore apenas
+	## em builds de debug, para que o filtro de export "scripts/debug/*"
+	## remova o código de QA do lançamento por completo.
+	## - Em debug: load() acha o script e instala o F1/F2/F3/F4 normalmente.
+	## - Em release: load() retorna null (arquivo fora do .pck) → guard evita
+	##   qualquer erro — o jogo segue 100% limpo, sem rastro de debug.
+	if not OS.is_debug_build():
+		return
+	if get_tree().root.has_node("DevMenu"):
+		return
+	var dev_script: Script = load("res://scripts/debug/dev_menu.gd")
+	if dev_script == null:
+		return
+	var dev_menu: Node = dev_script.new()
+	dev_menu.name = "DevMenu"
+	get_tree().root.add_child.call_deferred(dev_menu)
+	print("[ARCANJO CAIDO] DevMenu de QA instalado (F1 = painel)")
 
 
 func _show_panel(panel: Control) -> void:

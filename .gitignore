@@ -2,6 +2,7 @@
 .godot/
 *.translation
 build/
+dist/
 
 # Sistema
 Thumbs.db
